@@ -1,0 +1,5 @@
+struct = {
+    struct = {
+        cuchar = ([foobar])
+    }
+}

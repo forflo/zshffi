@@ -78,10 +78,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int ffilex();
+//extern int ffilex();
 void yyerror(struct nary_node **root, void *scanner, const char *str){
 	fprintf(stderr, "[Non-Interactive] %s\n", str);
 }
+
+extern int ffilex();
 
 int sig_cnt = 0;
 int tval_cnt = 0;
@@ -95,7 +97,7 @@ int carr_cnt = 0;
 int val_cnt = 0;
 
 
-#line 99 "ffi_parser.c" /* yacc.c:339  */
+#line 101 "ffi_parser.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -133,11 +135,11 @@ int val_cnt = 0;
 extern int ffidebug;
 #endif
 /* "%code requires" blocks.  */
-#line 44 "ffi_parser.y" /* yacc.c:355  */
+#line 46 "ffi_parser.y" /* yacc.c:355  */
 
 #define YYSTYPE FFISTYPE
 
-#line 141 "ffi_parser.c" /* yacc.c:355  */
+#line 143 "ffi_parser.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef FFITOKENTYPE
@@ -165,12 +167,12 @@ extern int ffidebug;
 
 union FFISTYPE
 {
-#line 27 "ffi_parser.y" /* yacc.c:355  */
+#line 29 "ffi_parser.y" /* yacc.c:355  */
 
 	void *v;
 	struct nary_node *k;
 
-#line 174 "ffi_parser.c" /* yacc.c:355  */
+#line 176 "ffi_parser.c" /* yacc.c:355  */
 };
 
 typedef union FFISTYPE FFISTYPE;
@@ -186,7 +188,7 @@ int ffiparse (struct nary_node **root, void *scan);
 
 /* Copy the second part of user declarations.  */
 
-#line 190 "ffi_parser.c" /* yacc.c:358  */
+#line 192 "ffi_parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -485,8 +487,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    60,    60,    64,    66,    70,    72,    76,    78,    80,
-      84,    86,    88,    92
+       0,    62,    62,    66,    68,    72,    74,    78,    80,    82,
+      86,    88,    90,    94
 };
 #endif
 
@@ -1280,79 +1282,79 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 61 "ffi_parser.y" /* yacc.c:1646  */
+#line 63 "ffi_parser.y" /* yacc.c:1646  */
     { *root = make_node(sig_cnt++, NT_SIGNATURE, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
-#line 1286 "ffi_parser.c" /* yacc.c:1646  */
+#line 1288 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 65 "ffi_parser.y" /* yacc.c:1646  */
+#line 67 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1292 "ffi_parser.c" /* yacc.c:1646  */
+#line 1294 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 67 "ffi_parser.y" /* yacc.c:1646  */
+#line 69 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1298 "ffi_parser.c" /* yacc.c:1646  */
+#line 1300 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 71 "ffi_parser.y" /* yacc.c:1646  */
+#line 73 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 1, (yyvsp[0].k));  }
-#line 1304 "ffi_parser.c" /* yacc.c:1646  */
+#line 1306 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 73 "ffi_parser.y" /* yacc.c:1646  */
+#line 75 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
-#line 1310 "ffi_parser.c" /* yacc.c:1646  */
+#line 1312 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 77 "ffi_parser.y" /* yacc.c:1646  */
+#line 79 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(s_cnt++, NT_SCALAR    , (yyvsp[-2].v), 1, (yyvsp[0].k)); }
-#line 1316 "ffi_parser.c" /* yacc.c:1646  */
+#line 1318 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 79 "ffi_parser.y" /* yacc.c:1646  */
+#line 81 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(sptr_cnt++, NT_SCALAR_PTR, (yyvsp[-3].v), 1, (yyvsp[0].k)); }
-#line 1322 "ffi_parser.c" /* yacc.c:1646  */
+#line 1324 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 81 "ffi_parser.y" /* yacc.c:1646  */
+#line 83 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(sarr_cnt++, NT_SCALAR_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1328 "ffi_parser.c" /* yacc.c:1646  */
+#line 1330 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 85 "ffi_parser.y" /* yacc.c:1646  */
+#line 87 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(c_cnt++, NT_COMPOUND    , (yyvsp[-4].v), 1, (yyvsp[-1].k)); }
-#line 1334 "ffi_parser.c" /* yacc.c:1646  */
+#line 1336 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 87 "ffi_parser.y" /* yacc.c:1646  */
+#line 89 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(cptr_cnt++, NT_COMPOUND_PTR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1340 "ffi_parser.c" /* yacc.c:1646  */
+#line 1342 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 89 "ffi_parser.y" /* yacc.c:1646  */
+#line 91 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(carr_cnt++, NT_COMPOUND_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1346 "ffi_parser.c" /* yacc.c:1646  */
+#line 1348 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 93 "ffi_parser.y" /* yacc.c:1646  */
+#line 95 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(val_cnt++, NT_VALUE, (yyvsp[-1].v), 0); }
-#line 1352 "ffi_parser.c" /* yacc.c:1646  */
+#line 1354 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1356 "ffi_parser.c" /* yacc.c:1646  */
+#line 1358 "ffi_parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1580,5 +1582,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 96 "ffi_parser.y" /* yacc.c:1906  */
+#line 98 "ffi_parser.y" /* yacc.c:1906  */
 

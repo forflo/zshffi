@@ -1,5 +1,6 @@
 #include "ffi_nary_tree.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /***************************************************************/
 /* takes up 24Byte on a amd64 System */
@@ -67,6 +68,7 @@ struct nary_node *new_node(void *content){
 	r->leaf = 1;
 	r->nnode = 0;
 	r->nodes = NULL;
+    r->node_type = 0;
 	return r;
 }
 
@@ -80,6 +82,23 @@ int free_node(struct nary_node *node){
 	free(node);
 	
 	return 0;
+}
+
+/* Close a komplete node. Original and clone are
+   independent. Node contents refer to the same adresses! */
+struct nary_node *clone_node(struct nary_node *node){
+    int i;
+    struct nary_node *r = new_node(node->content);
+    r->leaf = node->leaf;
+    r->nnode = node->nnode;
+    r->node_type = node->node_type;
+    r->nodes = NULL;
+
+    for (i=0; i<node->nnode; i++){
+        add_child(r, clone_node(node->nodes[i]));
+    }
+
+    return r;
 }
 
 /* Adds a new node to a given one. The new node will contain
@@ -104,8 +123,9 @@ int add_node(struct nary_node *parent, void *content){
 	parent->nodes[parent->nnode++] = new_node(content);
 
 	/* if parent was empty */
-	if(parent->leaf)
+	if(parent->leaf){
 		parent->leaf = 0;	
+    }
 
 	return 0;	
 }
@@ -117,11 +137,9 @@ int add_node(struct nary_node *parent, void *content){
 int add_child(struct nary_node *parent, struct nary_node *child){
 	/* allocate memory for new node in the node vector */
 	if(parent->nodes == NULL){
-		parent->nodes = (struct nary_node **) malloc(sizeof(struct 
-													nary_node *));
+		parent->nodes = malloc(sizeof(struct nary_node *));
 	} else {
-		parent->nodes = (struct nary_node **) realloc(parent->nodes, 
-											sizeof(struct nary_node *) * 
+		parent->nodes = realloc(parent->nodes, sizeof(struct nary_node *) * 
 											(parent->nnode + 1));
 	}
 

@@ -6,10 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int ffilex();
+//extern int ffilex();
 void yyerror(struct nary_node **root, void *scanner, const char *str){
 	fprintf(stderr, "[Non-Interactive] %s\n", str);
 }
+
+extern int ffilex();
 
 int sig_cnt = 0;
 int tval_cnt = 0;

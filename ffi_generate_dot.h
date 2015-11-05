@@ -3,7 +3,6 @@
 
 #include "ffi_nary_tree.h"
 
-int emit_childs(struct nary_node *node);
-int output(struct nary_node *node);
+int generate_dot(struct nary_node *node);
 
 #endif /* GENERATE_DOT */

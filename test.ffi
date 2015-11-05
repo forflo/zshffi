@@ -4,6 +4,14 @@ struct * = {
         cuchar * = ([32]), 
         culong = ([64])
     },
+
+
+
+
+
+
+
+
     cdouble * = ([3.141592]), 
     union = {
         cfloat = ([0.32]),

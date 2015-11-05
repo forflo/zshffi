@@ -63,12 +63,14 @@ letter  [A-Za-z]
 digit [0-9]
 allowed_symbols   "!"|"#"|"$"|"%"|"&"|"'"|"*"|"+"|"`"|"´"|"-"|"."|"/"|":"|";"|"<"|">"|"="|"?"|"@"|"["|"]"|"^"|"_"|"{"|"}"|"~"|"|"|" "
 escapes  \\n|\\t|\\a|\\b|\\r|\\v|\\\\|\\\"|\\\'|\\f|\\0|\\\(|\\\)
-delim \t\v\b" "\n
+delim [\t\v\b\ \n]+
 
 /* literals */
 string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 
 %%
+
+{delim} { }
 
 {cchar}         { yylval_param->v = (void *) CCHAR      ; return(s_type); }
 {cuchar}        { yylval_param->v = (void *) CUCHAR     ; return(s_type); }
@@ -105,7 +107,5 @@ string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 {struct}        { yylval_param->v = (void *) STRUCT     ; return(c_type); }
 
 {string}        { yylval_param->v = make_valueStr(yytext); return(string); }
-
-{delim} {}
 
 %%

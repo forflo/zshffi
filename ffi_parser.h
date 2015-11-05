@@ -48,7 +48,7 @@
 extern int ffidebug;
 #endif
 /* "%code requires" blocks.  */
-#line 44 "ffi_parser.y" /* yacc.c:1909  */
+#line 46 "ffi_parser.y" /* yacc.c:1909  */
 
 #define YYSTYPE FFISTYPE
 
@@ -80,7 +80,7 @@ extern int ffidebug;
 
 union FFISTYPE
 {
-#line 27 "ffi_parser.y" /* yacc.c:1909  */
+#line 29 "ffi_parser.y" /* yacc.c:1909  */
 
 	void *v;
 	struct nary_node *k;

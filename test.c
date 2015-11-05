@@ -14,11 +14,23 @@ void interpret(){
     add_child(child_par, child);
     add_child(par, child_par);
 
+    printf("%s\n", (char *) par->nodes[0]->nodes[0]->content);
+
+    struct nary_node *clone = clone_node(par);
+
     struct ffi_instruction ins[1000] = { 0 };
     int position = 0;
     int i;
 
     interpret_foo(ins, &position, par);
+
+    printf("New position: %d\n", position);
+    for (i=0; i<position; i++){
+        printf("Instruction: %d, Type: %d, Value: %s\n", ins[i].operation, ins[i].type, ins[i].value);
+    }
+
+    position = 0;
+    interpret_foo(ins, &position, clone);
 
     printf("New position: %d\n", position);
     for (i=0; i<position; i++){

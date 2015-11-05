@@ -1,6 +1,7 @@
 #ifndef NODE_DEFINES
 #define NODE_DEFINES
 
+/* Codes for s_types */
 #define CCHAR       1
 #define CUCHAR      2
 #define CSHORT      3
@@ -21,9 +22,11 @@
 #define CFLOAT      18
 #define CDOUBLE     19
 
+/* Codes for c_types */
 #define UNION       20
 #define STRUCT      21
 
+/* Code for non Terminals */
 #define NT_SIGNATURE     100
 #define NT_TYPEANDVAL    103
 #define NT_SCALAR_ARR    104   
