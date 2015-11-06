@@ -35,43 +35,6 @@ struct ffi_instruction **genops(struct nary_node *tval_list){
     return result;
 }
 
-static void emit_human(struct ffi_instruction ins[], int cnt){
-    int i;
-
-    printf("Instruktionen: %d\n", cnt);
-    for (i=0; i<cnt; i++){
-        switch(ins[i].operation) {
-            case member:
-                printf("[op: %s|type: %s |value: %s]\n", 
-                   get_operation_string(ins[i].operation),
-                   get_stype_string(ins[i].type),
-                   ins[i].value);
-            break;
-            case arr_to:
-                printf("[op: arr_to|type: none |value: none]\n");
-                break;
-            case ptr_to:
-                printf("[op: ptr_to|type: none |value: none]\n");
-                break;
-            case start_struct:
-                printf("[op: start_struct|type: none |value: none]\n");
-                break;
-            case start_union:
-                printf("[op: start_union|type: none |value: none]\n");
-                break;
-            case end_struct:
-                printf("[op: end_struct|type: none |value: none]\n");
-                break;
-            case end_union:
-                printf("[op: end_union|type: none |value: none]\n");
-                break;
-            case arr_end:
-                printf("[op: arr_end|type: none |value: none]\n");
-                break;
-        }
-    }
-    
-}
 
 int genops_scalar(struct ffi_instruction ins[], int *position, struct nary_node *scalar){
     int ty = scalar->node_type;

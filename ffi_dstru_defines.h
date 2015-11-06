@@ -26,96 +26,72 @@ This license slightly differs from the original MIT license.
 * Alteration of the packages license is not allowed.
 */
 
-#ifndef DSTRU_TEST_TYPES
-#define DSTRU_TEST_TYPES
+#ifndef DSTRU_DEFINES
+#define DSTRU_DEFINES
 
-#include <stdint.h>
+#include "config.h"
 
-/* Flat structures */
-struct flat_3 { 
-	char a; 
-	int b; 
-	short c; 
-};
+/* Wrapper types */
+#define DYN_S_UINT8 1001
+#define DYN_S_UINT16 1002
+#define DYN_S_UINT32 1000
+#define DYN_S_UINT64 1003
+#define DYN_S_FLOAT 1004
+#define DYN_S_DOUBLE 1005
+#define DYN_S_VOIDP 1006
+#define DYN_S_STRUCT 1007
+#define DYN_S_FIELD 1008
 
-struct flat_2 { 
-	int a; 
-	double b; 
-	char c; 
-};
+/* Alignment configuration */
 
-struct flat_1 { 
-	int a; 
-	int b; 
-};
-
-struct flat_4 {
-	void *a;
-};
-
-/* Nested structures and their components */
-struct nested_1 { 
-	int a; 
-	int b; 
-	short c;
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2;
-	} anon; 
-};
-
-struct nested_2 {
-	struct { 
-		uint32_t a; 
-		uint32_t b; 
-		uint16_t c; 
-	} anon1; 
-
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2; 
-	} anon2; 
-
-	struct { 
-		uint8_t string[32]; 
-		uint32_t arr[4]; 
-	} anon3;
-};
-
-struct nested_4 {
-	struct { 
-		int a; 
-		int b; 
-		short c; 
-	} anon1; 
-
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2; 
-	} anon2; 
-
-	struct { 
-		uint8_t string[7]; 
-		int arr[21]; 
-	} anon3;
-};
-
-struct nested_3_part_1 {
-	uint32_t a;
-	double b;
-};
-
-struct nested_3_part_2 {
-	uint8_t name[8];
-	uint8_t addr[8];	
-};
-
-struct nested_3 {
-	struct nested_3_part_1 a;
-	struct nested_3_part_2 b;
-};
-
+#ifndef DSTRU_UINT_8_AL
+#	define DYN_S_AL_UINT8 1
+/* todo add more platforms */
+#else
+#	define DYN_S_AL_UINT8 DSTRU_UINT_8_AL
 #endif
+
+#ifndef DSTRU_UINT_16_AL
+#	define DYN_S_AL_UINT16 2
+/* todo add more platforms */
+#else
+#	define DYN_S_AL_UINT16 DSTRU_UINT_16_AL
+#endif
+
+#ifndef DSTRU_UINT_32_AL
+#	define DYN_S_AL_UINT32 4
+#else
+#	define DYN_S_AL_UINT32 DSTRU_UINT_32_AL
+#endif
+
+#ifndef DSTRU_UINT_64_AL
+#	define DYN_S_AL_UINT64 8
+#else
+#	define DYN_S_AL_UINT64 DSTRU_UINT_64_AL
+#endif
+
+#ifndef DSTRU_FLOAT_AL
+#	define DYN_S_AL_FLOAT 4
+#else
+#	define DYN_S_AL_FLOAT DSTRU_FLOAT_AL
+#endif
+
+#ifndef DSTRU_DOUBLE_AL
+#	define DYN_S_AL_DOUBLE 8
+#else
+#	define DYN_S_AL_DOUBLE DSTRU_DOUBLE_AL
+#endif
+
+#ifndef DSTRU_PTR_AL
+#	define DYN_S_AL_VOIDP 8
+#else
+#	define DYN_S_AL_VOIDP DSTRU_PTR_AL
+#endif
+
+#ifndef DSTRU_WORDSIZE
+#	define DYN_S_AL_WS 8
+#else
+#	define DYN_S_AL_WS 8
+#endif
+
+#endif /* DSTRU_DEFINES */

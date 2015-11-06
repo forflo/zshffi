@@ -26,96 +26,21 @@ This license slightly differs from the original MIT license.
 * Alteration of the packages license is not allowed.
 */
 
-#ifndef DSTRU_TEST_TYPES
-#define DSTRU_TEST_TYPES
+#ifndef DSTRU_TYPES
+#define DSTRU_TYPES
 
-#include <stdint.h>
-
-/* Flat structures */
-struct flat_3 { 
-	char a; 
-	int b; 
-	short c; 
+/* align = 0 => library takes care
+ 	align in f(x)=2^x => alignment will be f(x) 
+ 	elem_num = number of first level members
+ 	embeddet bitfields (e.g. of structs) count as one.
+ 	size = number of bytes occupied by buffer. 
+ 	biggest_member = number of bytes of the biggest member */
+struct dstru_struct {
+	void *buffer;
+	int size;
+	int elem_num;
+	int align;
+	int biggest_member;
 };
 
-struct flat_2 { 
-	int a; 
-	double b; 
-	char c; 
-};
-
-struct flat_1 { 
-	int a; 
-	int b; 
-};
-
-struct flat_4 {
-	void *a;
-};
-
-/* Nested structures and their components */
-struct nested_1 { 
-	int a; 
-	int b; 
-	short c;
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2;
-	} anon; 
-};
-
-struct nested_2 {
-	struct { 
-		uint32_t a; 
-		uint32_t b; 
-		uint16_t c; 
-	} anon1; 
-
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2; 
-	} anon2; 
-
-	struct { 
-		uint8_t string[32]; 
-		uint32_t arr[4]; 
-	} anon3;
-};
-
-struct nested_4 {
-	struct { 
-		int a; 
-		int b; 
-		short c; 
-	} anon1; 
-
-	struct { 
-		double d1; 
-		uint16_t s; 
-		double d2; 
-	} anon2; 
-
-	struct { 
-		uint8_t string[7]; 
-		int arr[21]; 
-	} anon3;
-};
-
-struct nested_3_part_1 {
-	uint32_t a;
-	double b;
-};
-
-struct nested_3_part_2 {
-	uint8_t name[8];
-	uint8_t addr[8];	
-};
-
-struct nested_3 {
-	struct nested_3_part_1 a;
-	struct nested_3_part_2 b;
-};
-
-#endif
+#endif /* DSTRU_TYPES */
