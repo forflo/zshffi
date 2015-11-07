@@ -27,7 +27,7 @@ int val_cnt = 0;
 %}
 
 %union {
-	void *v;
+	struct token_value *v;
 	struct nary_node *k;
 }
 

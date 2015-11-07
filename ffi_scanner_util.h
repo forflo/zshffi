@@ -7,6 +7,6 @@
  	it manually allocates memory for the contained string
  	Param: A valid pointer
  	Return: A valid pointer or NULL on failure */
-void *make_valueStr(const char *str);
+struct token_value *make_valueStr(const char *str);
 
 #endif /* SCANNER_UTIL */

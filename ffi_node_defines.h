@@ -42,13 +42,9 @@
 #define GENERATE_ENUM(X) X,
 
 /* Codes for s_types and c_types */
-enum type {
-    LIST_TYPE(GENERATE_ENUM)
-};
+enum type { LIST_TYPE(GENERATE_ENUM) };
 
 /* Code for non Terminals */
-enum node_types {
-    LIST_NTYPE(GENERATE_ENUM)
-};
+enum node_types { LIST_NTYPE(GENERATE_ENUM) };
 
 #endif /* NODE_DEFINES */
