@@ -49,7 +49,7 @@ int val_cnt = 0;
 
 %token arrow comma equals pointer array 
 %token curlopen curlclose 
-%token string c_type s_type pipe_del
+%token string c_type s_type
 
 %type <k> signature type_and_val
 %type <k> tval_list scalar value compound
