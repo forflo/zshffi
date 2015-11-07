@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static const struct ffi_instruction arr_temp = {ARR_TO, 0, NULL};
-static const struct ffi_instruction ptr_temp = {PTR_TO, 0, NULL};
 static const struct ffi_instruction struct_temp_start = {START_STRUCT, 0, NULL};
 static const struct ffi_instruction union_temp_start = {START_UNION, 0, NULL};
 static const struct ffi_instruction struct_temp_end = {END_STRUCT, 0, NULL};
 static const struct ffi_instruction union_temp_end = {END_UNION, 0, NULL};
 static const struct ffi_instruction arr_end_temp = {ARR_END, 0, NULL};
+static const struct ffi_instruction arr_temp = {ARR_TO, 0, NULL};
+static const struct ffi_instruction ptr_temp = {PTR_TO, 0, NULL};
 
 struct ffi_instruction **genops(struct nary_node *tval_list){
     struct ffi_instruction instructions[1000] = { 0 };

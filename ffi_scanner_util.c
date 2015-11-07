@@ -9,5 +9,6 @@ struct token_value *make_valueStr(const char *str){
 	strcpy(res, ++str);
     res[strlen(res) - 1] = '\0';
     v->value = res;
+    v->length = strlen(res);
 	return v;
 }
