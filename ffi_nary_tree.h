@@ -1,15 +1,6 @@
 #ifndef NARY_TREE
 #define NARY_TREE
 
-/*
- ---useful defines---
- */
-#define MK_CONTENT struct node_content *c = \
-    (struct node_content*) malloc(sizeof(struct node_content));
-
-#define MK_LEAF struct nary_node *leaf = \
-	new_node((void *) c);
-
 struct nary_node {
 	void *content; //pointer to the content
     int node_type;
@@ -27,8 +18,10 @@ int destroy_tree(struct nary_node *tree);
 struct nary_node *clone_node(struct nary_node *original);
 
 int traverse_preorder(struct nary_node *node, 
-					int (*callback)(void *c, void *u), void *userparam);
+        int (*callback)(void *c, void *u), 
+        void *userparam);
 int traverse_postorder(struct nary_node *node, 
-					int (*callback)(void *c, void *u), void *u);
+	    int (*callback)(void *c, void *u), 
+        void *u);
 
 #endif /* NARY_TREE */

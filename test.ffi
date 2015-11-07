@@ -1,29 +1,21 @@
 struct * = {
-    cchar * = ([42]),
+    cchar * = [42],
     cint @ = {
-        cuchar * = ([32]), 
-        culong = ([64])
+        cuchar * = [32], 
+        culong = [64]
     },
-
-
-
-
-
-
-
-
-    cdouble * = ([3.141592]), 
+    cdouble * = [3.141592], 
     union = {
-        cfloat = ([0.32]),
-        cdouble = ([0.342])
+        cfloat = [0.32],
+        cdouble = [0.342]
     },
     struct * = {
-        cchar = ([a]),
+        cchar = [a],
         cuchar @ = {
-            cchar = ([a]), 
-            cchar = ([b])
+            cchar = [a], 
+            cchar = [b]
         },
-        cchar * = ([foobar]),
-        cuchar* = ([zsh_functionname])
+        cchar * = [foobar],
+        cuchar* = [zsh_functionname]
     }
-}, cfloat = ([0.53]), cint = ([32]) -> cuint = ([?])
+}, cfloat = [0.53], cint = [32] -> cuint = [?]
