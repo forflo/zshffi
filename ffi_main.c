@@ -23,7 +23,7 @@ int main(void){
     ffiset_in(stdin, ffi_scan);
     ffiparse(&root, ffi_scan);
 
-    interpret(root->nodes[0]->nodes[0]->nodes[0]);
+//    interpret(root->nodes[0]->nodes[0]->nodes[0]);
 
     ffilex_destroy(ffi_scan);
 

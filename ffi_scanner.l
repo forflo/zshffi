@@ -45,13 +45,6 @@ clong        "clong"
 culong       "culong"
 clonglong    "clonglong"
 culonglong   "culonglong"
-cintmax_t    "cintmax_t"
-cuintmax_t   "cuintmax_t"
-csize_t      "csize_t"
-cssize_t     "cssize_t"
-cptrdiff_t   "cptrdiff_t"
-coff_t       "coff_t"
-cwchar_t     "cwchar_t"
 cfloat       "cfloat"
 cdouble      "cdouble"
 
@@ -72,30 +65,21 @@ string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 
 {delim} { }
 
-{cchar}         { yylval_param->v = (void *) CCHAR      ; return(s_type); }
-{cuchar}        { yylval_param->v = (void *) CUCHAR     ; return(s_type); }
-{cshort}        { yylval_param->v = (void *) CSHORT     ; return(s_type); }
-{cushort}       { yylval_param->v = (void *) CUSHORT    ; return(s_type); }
-{cint}          { yylval_param->v = (void *) CINT       ; return(s_type); }
-{cuint}         { yylval_param->v = (void *) CUINT      ; return(s_type); }
-{clong}         { yylval_param->v = (void *) CLONG      ; return(s_type); }
-{culong}        { yylval_param->v = (void *) CULONG     ; return(s_type); }
-{clonglong}     { yylval_param->v = (void *) CLONGLONG  ; return(s_type); }
-{culonglong}    { yylval_param->v = (void *) CULONGLONG ; return(s_type); }
-{cintmax_t}     { yylval_param->v = (void *) CINTMAX_T  ; return(s_type); }
-{cuintmax_t}    { yylval_param->v = (void *) CUINTMAX_T ; return(s_type); }
-{csize_t}       { yylval_param->v = (void *) CSIZE_T    ; return(s_type); }
-{cssize_t}      { yylval_param->v = (void *) CSSIZE_T   ; return(s_type); }
-{cptrdiff_t}    { yylval_param->v = (void *) CPTRDIFF_T ; return(s_type); }
-{coff_t}        { yylval_param->v = (void *) COFF_T     ; return(s_type); }
-{cwchar_t}      { yylval_param->v = (void *) CWCHAR_T   ; return(s_type); }
-{cfloat}        { yylval_param->v = (void *) CFLOAT     ; return(s_type); }
-{cdouble}       { yylval_param->v = (void *) CDOUBLE    ; return(s_type); }
+{cchar}         { yylval_param->v = (void *) STYPE_CCHAR      ; return(s_type); }
+{cuchar}        { yylval_param->v = (void *) STYPE_CUCHAR     ; return(s_type); }
+{cshort}        { yylval_param->v = (void *) STYPE_CSHORT     ; return(s_type); }
+{cushort}       { yylval_param->v = (void *) STYPE_CUSHORT    ; return(s_type); }
+{cint}          { yylval_param->v = (void *) STYPE_CINT       ; return(s_type); }
+{cuint}         { yylval_param->v = (void *) STYPE_CUINT      ; return(s_type); }
+{clong}         { yylval_param->v = (void *) STYPE_CLONG      ; return(s_type); }
+{culong}        { yylval_param->v = (void *) STYPE_CULONG     ; return(s_type); }
+{clonglong}     { yylval_param->v = (void *) STYPE_CLONGLONG  ; return(s_type); }
+{culonglong}    { yylval_param->v = (void *) STYPE_CULONGLONG ; return(s_type); }
+{cfloat}        { yylval_param->v = (void *) STYPE_CFLOAT     ; return(s_type); }
+{cdouble}       { yylval_param->v = (void *) STYPE_CDOUBLE    ; return(s_type); }
 
 {pointer}       { return(pointer);   }
 {equals}        { return(equals);    }
-{paropen}       { return(paropen);   }
-{parclose}      { return(parclose);  }
 {curlopen}      { return(curlopen);  }
 {curlclose}     { return(curlclose); }
 {arrow}         { return(arrow);     }
@@ -103,8 +87,8 @@ string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 {pipe_del}      { return(pipe_del);  }
 {array}         { return(array);     }
 
-{union}         { yylval_param->v = (void *) UNION      ; return(c_type); }
-{struct}        { yylval_param->v = (void *) STRUCT     ; return(c_type); }
+{union}         { yylval_param->v = (void *) CTYPE_UNION      ; return(c_type); }
+{struct}        { yylval_param->v = (void *) CTYPE_STRUCT     ; return(c_type); }
 
 {string}        { yylval_param->v = make_valueStr(yytext); return(string); }
 

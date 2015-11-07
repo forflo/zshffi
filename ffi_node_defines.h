@@ -1,41 +1,54 @@
 #ifndef NODE_DEFINES
 #define NODE_DEFINES
 
-/* Codes for s_types */
-#define CCHAR       1
-#define CUCHAR      2
-#define CSHORT      3
-#define CUSHORT     4
-#define CINT        5
-#define CUINT       6
-#define CLONG       7
-#define CULONG      8
-#define CLONGLONG   9
-#define CULONGLONG  10
-#define CINTMAX_T   11
-#define CUINTMAX_T  12
-#define CSIZE_T     13
-#define CSSIZE_T    14
-#define CPTRDIFF_T  15
-#define COFF_T      16
-#define CWCHAR_T    17
-#define CFLOAT      18
-#define CDOUBLE     19
+/* Generator Makro for automatic
+   enum and string-table generation */
+#define LIST_TYPE(F) \
+        F(STYPE_CCHAR)      \
+        F(STYPE_CUCHAR)     \
+        F(STYPE_CSHORT)     \
+        F(STYPE_CUSHORT)    \
+        F(STYPE_CINT)       \
+        F(STYPE_CUINT)      \
+        F(STYPE_CLONG)      \
+        F(STYPE_CULONG)     \
+        F(STYPE_CLONGLONG)  \
+        F(STYPE_CULONGLONG) \
+        F(STYPE_CINTMAX_T)  \
+        F(STYPE_CUINTMAX_T) \
+        F(STYPE_CSIZE_T)    \
+        F(STYPE_CSSIZE_T)   \
+        F(STYPE_CPTRDIFF_T) \
+        F(STYPE_COFF_T)     \
+        F(STYPE_CWCHAR_T)   \
+        F(STYPE_CFLOAT)     \
+        F(STYPE_CDOUBLE)    \
+        F(CTYPE_UNION)      \
+        F(CTYPE_STRUCT)
 
-/* Codes for c_types */
-#define UNION       20
-#define STRUCT      21
+#define LIST_NTYPE(F)       \
+        F(NT_SIGNATURE)     \
+        F(NT_TYPEANDVAL)    \
+        F(NT_SCALAR_ARR)    \
+        F(NT_SCALAR)        \
+        F(NT_SCALAR_PTR)    \
+        F(NT_COMPOUND)      \
+        F(NT_COMPOUND_ARR)  \
+        F(NT_COMPOUND_PTR)  \
+        F(NT_TVAL_LIST)     \
+        F(NT_VALUE)
+
+#define GENERATE_STRING(X) #X,
+#define GENERATE_ENUM(X) X,
+
+/* Codes for s_types and c_types */
+enum type {
+    LIST_TYPE(GENERATE_ENUM)
+};
 
 /* Code for non Terminals */
-#define NT_SIGNATURE     100
-#define NT_TYPEANDVAL    103
-#define NT_SCALAR_ARR    104   
-#define NT_SCALAR        105
-#define NT_SCALAR_PTR    106   
-#define NT_COMPOUND      107   
-#define NT_COMPOUND_ARR  108
-#define NT_COMPOUND_PTR  109
-#define NT_TVAL_LIST     110   
-#define NT_VALUE         111   
+enum node_types {
+    LIST_NTYPE(GENERATE_ENUM)
+};
 
 #endif /* NODE_DEFINES */

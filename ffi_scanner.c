@@ -1091,97 +1091,97 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 75 "ffi_scanner.l"
-{ yylval_param->v = (void *) CCHAR      ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CCHAR      ; return(s_type); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 76 "ffi_scanner.l"
-{ yylval_param->v = (void *) CUCHAR     ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CUCHAR     ; return(s_type); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 77 "ffi_scanner.l"
-{ yylval_param->v = (void *) CSHORT     ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CSHORT     ; return(s_type); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 78 "ffi_scanner.l"
-{ yylval_param->v = (void *) CUSHORT    ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CUSHORT    ; return(s_type); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 79 "ffi_scanner.l"
-{ yylval_param->v = (void *) CINT       ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CINT       ; return(s_type); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 80 "ffi_scanner.l"
-{ yylval_param->v = (void *) CUINT      ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CUINT      ; return(s_type); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 81 "ffi_scanner.l"
-{ yylval_param->v = (void *) CLONG      ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CLONG      ; return(s_type); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 82 "ffi_scanner.l"
-{ yylval_param->v = (void *) CULONG     ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CULONG     ; return(s_type); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 83 "ffi_scanner.l"
-{ yylval_param->v = (void *) CLONGLONG  ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CLONGLONG  ; return(s_type); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 84 "ffi_scanner.l"
-{ yylval_param->v = (void *) CULONGLONG ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CULONGLONG ; return(s_type); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 85 "ffi_scanner.l"
-{ yylval_param->v = (void *) CINTMAX_T  ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CINTMAX_T  ; return(s_type); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 86 "ffi_scanner.l"
-{ yylval_param->v = (void *) CUINTMAX_T ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CUINTMAX_T ; return(s_type); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 87 "ffi_scanner.l"
-{ yylval_param->v = (void *) CSIZE_T    ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CSIZE_T    ; return(s_type); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 88 "ffi_scanner.l"
-{ yylval_param->v = (void *) CSSIZE_T   ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CSSIZE_T   ; return(s_type); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 89 "ffi_scanner.l"
-{ yylval_param->v = (void *) CPTRDIFF_T ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CPTRDIFF_T ; return(s_type); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 90 "ffi_scanner.l"
-{ yylval_param->v = (void *) COFF_T     ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_COFF_T     ; return(s_type); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 91 "ffi_scanner.l"
-{ yylval_param->v = (void *) CWCHAR_T   ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CWCHAR_T   ; return(s_type); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 92 "ffi_scanner.l"
-{ yylval_param->v = (void *) CFLOAT     ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CFLOAT     ; return(s_type); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 93 "ffi_scanner.l"
-{ yylval_param->v = (void *) CDOUBLE    ; return(s_type); }
+{ yylval_param->v = (void *) STYPE_CDOUBLE    ; return(s_type); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -1236,12 +1236,12 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 106 "ffi_scanner.l"
-{ yylval_param->v = (void *) UNION      ; return(c_type); }
+{ yylval_param->v = (void *) CTYPE_UNION      ; return(c_type); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 107 "ffi_scanner.l"
-{ yylval_param->v = (void *) STRUCT     ; return(c_type); }
+{ yylval_param->v = (void *) CTYPE_STRUCT     ; return(c_type); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP

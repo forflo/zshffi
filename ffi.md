@@ -33,27 +33,26 @@ ffi_read var_1 "@->[1].[0]->uint64"
     <c_type> ::= union | struct
     <s_type> ::= cchar       cuchar      cshort      cushort     cint        
                  cuint       clong       culong      clonglong   culonglong  
-                 cintmax_t   cuintmax_t  csize_t     cssize_t    cptrdiff_t  
-                 coff_t      cwchar_t    cfloat      cdouble     
+                 cfloat      cdouble     
 
 ## Example Code
 ffi_call printf_ret printf "
     struct * = {
-        uint16 * = (42),
-        uint32 @ = {
-            uint64 * = (32), 
-            uint64 = (64),
+        cushort * = (42),
+        culong @ = {
+            culong * = (32), 
+            culong = (64),
         },
-        double * = (3.141592), 
+        cdouble * = (3.141592), 
         union = {
-            float = (0.32),
-            double = (0.342),
+            cfloat = (0.32),
+            cdouble = (0.342),
         },
         struct * = {
-            char = (a),
-            char @ = {
-                char = (a), 
-                char = (b)
+            cchar = (a),
+            cchar @ = {
+                cchar = (a), 
+                cchar = (b)
             },
             char * = (foobar),
             callback* = (zsh_functionname),
@@ -101,34 +100,6 @@ Clonglong
 Culonglong
 
     Equivalent to the native unsigned long long c-type (UInt64)
-
-Cintmax_t
-
-    Equivalent to the native intmax_t c-type (Int64)
-
-Cuintmax_t
-
-    Equivalent to the native uintmax_t c-type (UInt64)
-
-Csize_t
-
-    Equivalent to the native size_t c-type (UInt)
-
-Cssize_t
-
-    Equivalent to the native ssize_t c-type
-
-    Cptrdiff_t
-
-        Equivalent to the native ptrdiff_t c-type (Int)
-
-Coff_t
-
-    Equivalent to the native off_t c-type
-
-    Cwchar_t
-
-        Equivalent to the native wchar_t c-type (Int32)
 
 Cfloat
 

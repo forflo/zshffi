@@ -48,7 +48,7 @@ int val_cnt = 0;
 }
 
 %token arrow comma equals pointer array 
-%token curlopen curlclose paropen parclose
+%token curlopen curlclose 
 %token string c_type s_type pipe_del
 
 %type <k> signature type_and_val
@@ -91,7 +91,7 @@ compound            : c_type equals curlopen tval_list curlclose
                         {$$ = make_node(carr_cnt++, NT_COMPOUND_ARR, $1, 1, $5); }
                     ;
 
-value               : paropen string parclose
+value               : string
                         {$$ = make_node(val_cnt++, NT_VALUE, $2, 0); }
                     ;
 

@@ -5,24 +5,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static const struct ffi_instruction arr_temp = {ARR_TO, 0, NULL};
+static const struct ffi_instruction ptr_temp = {PTR_TO, 0, NULL};
+static const struct ffi_instruction struct_temp_start = {START_STRUCT, 0, NULL};
+static const struct ffi_instruction union_temp_start = {START_UNION, 0, NULL};
+static const struct ffi_instruction struct_temp_end = {END_STRUCT, 0, NULL};
+static const struct ffi_instruction union_temp_end = {END_UNION, 0, NULL};
+static const struct ffi_instruction arr_end_temp = {ARR_END, 0, NULL};
+
 struct ffi_instruction **genops(struct nary_node *tval_list){
-    struct ffi_instruction **result = malloc(sizeof(struct ffi_instruction *) * INS_MAX);
     struct ffi_instruction instructions[1000] = { 0 };
+    struct ffi_instruction **result = 
+        malloc(sizeof(struct ffi_instruction *) * INS_MAX);
     int instruction_cnt = 0, i;
 
-    if (result == NULL){
+    if (result == NULL)
         return NULL;
-    }
 
     for (i=0; i<INS_MAX; i++){
         result[i] = malloc(sizeof(struct ffi_instruction));
-        if (result[i] == NULL){
+        if (result[i] == NULL)
             return NULL;
-        }
     }
 
     genops_tvallist(instructions, &instruction_cnt, tval_list);
-    //emit_human(instructions, instruction_cnt);
 
     for (i=0; i<instruction_cnt; i++){
         result[i]->operation = instructions[i].operation;
@@ -35,15 +41,16 @@ struct ffi_instruction **genops(struct nary_node *tval_list){
     return result;
 }
 
+int genops_scalar(struct ffi_instruction ins[], 
+        int *position, 
+        struct nary_node *scalar){
 
-int genops_scalar(struct ffi_instruction ins[], int *position, struct nary_node *scalar){
     int ty = scalar->node_type;
     struct ffi_instruction scalar_temp = { 
-        member, (long) scalar->content, (char *) scalar->nodes[0]->content
+        MEMBER, 
+        (long) scalar->content, 
+        (char *) scalar->nodes[0]->content
     }; 
-    struct ffi_instruction arr_temp = {arr_to, 0, NULL};
-    struct ffi_instruction ptr_temp = {ptr_to, 0, NULL};
-    struct ffi_instruction arr_end_temp = {arr_end, 0, NULL};
 
     switch (ty){
         case NT_SCALAR    : 
@@ -68,15 +75,11 @@ int genops_scalar(struct ffi_instruction ins[], int *position, struct nary_node 
     return 0;
 }
 
-int genops_compound(struct ffi_instruction ins[], int *position, struct nary_node *compound){
+int genops_compound(struct ffi_instruction ins[], 
+        int *position, 
+        struct nary_node *compound){
     int ty = compound->node_type;
     long c_type = (long) compound->content;
-    struct ffi_instruction arr_temp = {arr_to, 0, NULL};
-    struct ffi_instruction ptr_temp = {ptr_to, 0, NULL};
-    struct ffi_instruction struct_temp_start = {start_struct, 0, NULL};
-    struct ffi_instruction union_temp_start = {start_union, 0, NULL};
-    struct ffi_instruction struct_temp_end = {end_struct, 0, NULL};
-    struct ffi_instruction union_temp_end = {end_union, 0, NULL};
 
     switch (ty){
         case NT_COMPOUND: break;
@@ -91,7 +94,7 @@ int genops_compound(struct ffi_instruction ins[], int *position, struct nary_nod
     }
 
     switch(c_type){
-        case STRUCT: 
+        case CTYPE_STRUCT: 
             ins[*position] = struct_temp_start;
             (*position)++; 
             genops_tvallist(ins, position, compound->nodes[0]);
@@ -99,7 +102,7 @@ int genops_compound(struct ffi_instruction ins[], int *position, struct nary_nod
             ins[*position] = struct_temp_end;
             (*position)++; 
             break;
-        case UNION: 
+        case CTYPE_UNION: 
             ins[*position] = union_temp_start; 
             (*position)++; 
             genops_tvallist(ins, position, compound->nodes[0]);
@@ -112,7 +115,9 @@ int genops_compound(struct ffi_instruction ins[], int *position, struct nary_nod
     return 0;
 }
 
-int genops_tvallist(struct ffi_instruction ins[], int *position, struct nary_node *tvallist){
+int genops_tvallist(struct ffi_instruction ins[], 
+        int *position, 
+        struct nary_node *tvallist){
     if (tvallist->nnode == 2){
         genops_tvallist(ins, position, tvallist->nodes[0]);
         genops_tval(ins, position, tvallist->nodes[1]);
@@ -121,7 +126,9 @@ int genops_tvallist(struct ffi_instruction ins[], int *position, struct nary_nod
     }
 }
 
-int genops_tval(struct ffi_instruction ins[], int *position, struct nary_node *tval){
+int genops_tval(struct ffi_instruction ins[], 
+        int *position, 
+        struct nary_node *tval){
     int ty = tval->nodes[0]->node_type;
 
     if (ty == NT_SCALAR || ty == NT_SCALAR_PTR || ty == NT_SCALAR_ARR){
