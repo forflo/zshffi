@@ -26,8 +26,8 @@ This license slightly differs from the original MIT license.
 * Alteration of the packages license is not allowed.
 */
 
-#include "dstru_defines.h"
-#include "dstru_util_funcs.h"
+#include "ffi_dstru_util.h"
+#include "ffi_dstru.h"
 
 static const int TYPE_LOOKUP[] = {
 	0, DYN_S_UINT8, DYN_S_UINT16, 

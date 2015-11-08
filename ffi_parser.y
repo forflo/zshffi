@@ -51,17 +51,13 @@ int val_cnt = 0;
 %token curlopen curlclose 
 %token string c_type s_type
 
-%type <k> signature type_and_val
+%type <k> type_and_val
 %type <k> tval_list scalar value compound
 %type <v> s_type c_type string
 
-%start signature
+%start type_and_val
 
 %%
-
-signature           : tval_list arrow type_and_val
-                        { *root = make_node(sig_cnt++, NT_SIGNATURE, NULL, 2, $1, $3);  }
-                    ;
 
 type_and_val        : scalar
                         {$$ = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, $1);  }
@@ -92,7 +88,7 @@ compound            : c_type equals curlopen tval_list curlclose
                     ;
 
 value               : string
-                        {$$ = make_node(val_cnt++, NT_VALUE, $2, 0); }
+                        {$$ = make_node(val_cnt++, NT_VALUE, $1, 0); }
                     ;
 
 %%

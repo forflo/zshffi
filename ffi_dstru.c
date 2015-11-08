@@ -31,13 +31,10 @@ This license slightly differs from the original MIT license.
 #include <string.h>
 #include <stdint.h>
 
-#include "dstru_funcs.h"
-#include "dstru_defines.h"
-#include "dstru_types.h"
+#include "ffi_dstru.h"
+#include "ffi_dstru_util.h"
 
-#include "dstru_util_funcs.h"
-
-int dstru_sizeof(int type, struct dstru_struct *content){
+int dstru_sizeof(enum dstru_types type, struct dstru_struct *content){
 	switch(type){
 		case DYN_S_UINT8 : return sizeof(uint8_t);
 		case DYN_S_UINT16: return sizeof(uint16_t);
@@ -47,49 +44,46 @@ int dstru_sizeof(int type, struct dstru_struct *content){
 		case DYN_S_DOUBLE: return sizeof(double);
 		case DYN_S_VOIDP : return sizeof(void*);
 		case DYN_S_STRUCT: return content->size;
-		default: return 1;
+		default: return -1;
 	}
 }
 
-int dstru_padding(int type, struct dstru_struct *s){
+/* if (s->align == 1) [...] 
+      Alignment to the modulo 1 which means that no padding bytes are
+      ever needed. This is equivalent to full structure packing in C.
+   if (s->align >= 1) [...]
+      This means that s is aligned by a fixed modulo, in this case
+      s->align. The function dstru_init assures that it's generated
+      instances only have values for s->align that are powers of 2. 
+      However, for performance reasons, this function won't enforce this 
+   if (s->align == 0)
+      The padding is calculated depending on the argument type.
+   */
+int dstru_padding(enum dstru_types type, struct dstru_struct *s){
+    int alignment = 0;
 	if (s == NULL || type < 0)
 		return 1;
 
-	/* Full structure packing enabled. No alignment padding! */
-	if(s->align == 1){
-		return 0; 
-	} else if (s->align >= 1){
-		return (s->align - (s->size % s->align)) % s->align;
-	/* No packing. Alignment follows the DYN_S_AL_* defines*/
-	} else {
-		switch(type){
-			case DYN_S_UINT8: 
-				return 0;
-			case DYN_S_STRUCT:
-			case DYN_S_UINT16:
-				return   (DYN_S_AL_UINT16 - (s->size % DYN_S_AL_UINT16)) %
-				DYN_S_AL_UINT16;
-			case DYN_S_UINT32:
-				return   (DYN_S_AL_UINT32 - (s->size % DYN_S_AL_UINT32)) %
-				DYN_S_AL_UINT32;
-			case DYN_S_UINT64:
-				return   (DYN_S_AL_UINT64 - (s->size % DYN_S_AL_UINT64)) %
-				DYN_S_AL_UINT64;
-			case DYN_S_FLOAT:
-				return   (DYN_S_AL_FLOAT - (s->size % DYN_S_AL_FLOAT)) %
-				DYN_S_AL_FLOAT;
-			case DYN_S_DOUBLE:
-				return   (DYN_S_AL_DOUBLE - (s->size % DYN_S_AL_DOUBLE)) %
-				DYN_S_AL_DOUBLE;
-			case DYN_S_VOIDP:
-				return   (DYN_S_AL_VOIDP - (s->size % DYN_S_AL_VOIDP)) %
-				DYN_S_AL_VOIDP;
-			default: 
-				return 0;
-		}	
+    switch (s->align) {
+        case 1: return 0; break;
+        case 0: switch(type){
+		    	case DYN_S_UINT8:  return 0;
+		    	case DYN_S_UINT16: alignment = DYN_S_AL_UINT16; break;
+		    	case DYN_S_UINT32: alignment = DYN_S_AL_UINT32; break;
+		    	case DYN_S_UINT64: alignment = DYN_S_AL_UINT64; break;
+		    	case DYN_S_FLOAT:  alignment = DYN_S_AL_FLOAT; break;
+		    	case DYN_S_DOUBLE: alignment = DYN_S_AL_DOUBLE; break;
+		    	case DYN_S_VOIDP:  alignment = DYN_S_AL_VOIDP; break;
+		    }
+            break;
+        default: alignment = s->align; break;
 	}
+
+    return (alignment - (s->size % alignment)) % alignment;
 }
 
+/* Adds remaining padding bytes to the structure if it isn't
+   already properly aligned. */
 int dstru_finalize(struct dstru_struct *dest){
 	int new_size;
 	if (!dstru_is_power_of_two(dest->align) 
@@ -97,13 +91,12 @@ int dstru_finalize(struct dstru_struct *dest){
 		|| dest == NULL)
 		return 1;
 
-	/* biggest_member alignment cannot be bigger than 8 */
-	if (dest->biggest_member > 8){
+	/* Biggest member alignment is forbidden to be bigger than 8 */
+	if (dest->biggest_member > 8)
 		return 1;
-	} else {
+	else 
 		new_size = dest->size + 
-			dstru_padding(dstru_lookup_type(dest->biggest_member), dest);
-	}
+            dstru_padding(dstru_lookup_type(dest->biggest_member), dest);
 
 	dest->size = new_size;
 	dest->buffer = realloc(dest->buffer, new_size);
@@ -114,50 +107,51 @@ int dstru_finalize(struct dstru_struct *dest){
 	return 0;
 }
 
-int dstru_add_member(int type, void *content, struct dstru_struct *dest){
+int dstru_add_member(enum dstru_types type, 
+        void *content, 
+        struct dstru_struct *dest){
+
 	int pad_size, new_size;
 	uint8_t *tempv, *tempp;
 	int vi;
 
-	if (!dstru_is_power_of_two(dest->align) && (dest->align != 0))
+	if ((dest->align != 0) && !dstru_is_power_of_two(dest->align))
 		return 1;
 
 	if(dest == NULL || content == NULL)
 		return 1;	
 
-	/* element adding logic begins here */
 	new_size = dest->size + 
-				dstru_padding(type, dest) + 
-				dstru_sizeof(type, content);
+        dstru_padding(type, dest) + 
+        dstru_sizeof(type, content);
 
 	pad_size = new_size - dstru_sizeof(type, content);
 
 	dest->buffer = realloc(dest->buffer, new_size);
-	if(dest->buffer == NULL)
-		return 1;
-
 	dest->size = new_size;
 	dest->elem_num++;
 
-	/* update the biggest_member field if the new field 
-	 	will be bigger than every other field before (dest->buffer) */
-	if (dest->biggest_member < dstru_sizeof(type,content)){
-		dest->biggest_member = dstru_sizeof(type,content);
-	}
+	if(dest->buffer == NULL)
+		return 1;
 
-	/* type dependent adding logic */
+	/* Update the biggest_member field if the new field 
+	 	will be bigger than every other field before (dest->buffer) */
+	if (dest->biggest_member < dstru_sizeof(type, content))
+		dest->biggest_member = dstru_sizeof(type, content);
+
+	/* Type dependent adding logic */
 	switch(type){
 		case DYN_S_STRUCT:
-			/* copies the field into the own buffer */
+			/* Copies the field into the own buffer */
 			if(!memcpy(((uint8_t *) dest->buffer) + pad_size, 
-						((struct dstru_struct *)content)->buffer, 
-						((struct dstru_struct *)content)->size))
+			    ((struct dstru_struct *)content)->buffer, 
+				((struct dstru_struct *)content)->size))
 				return 1;
 			break;
 		case DYN_S_UINT32:
 			/* Memory has been allocated at this point 
 				Copy data from c to the buffer 
-			 	Can be understood as.
+			 	Can be understood as follows:
 				1) Get startaddress (new_size - sizeof(int) = number of padding
 				2) Cast the address appropriate
 				3) Copy the castet content of c into the memory */
@@ -190,7 +184,6 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 				*((double *) content);
 			break;
 		case DYN_S_VOIDP:
-			/* The tricky bit */
 			tempv = ((uint8_t *) dest->buffer) + 
 					(new_size - dstru_sizeof(type, content));
 			tempp = (uint8_t *) &content;
@@ -281,6 +274,37 @@ int dstru_add_array(int num, int arr_member_type,
 	return 0;
 }
 
+/* Align = 0 means no packing. 1 means pack all without any alignment */
+int dstru_init(int align, struct dstru_struct **s){
+	struct dstru_struct *ret;
+	ret = malloc(sizeof(struct dstru_struct));
+
+	if (ret == NULL 
+        || align < 0 
+        || !dstru_is_power_of_two(align) 
+        && align != 0) return 1;
+
+	ret->buffer = NULL;
+	ret->size = 0;
+	ret->elem_num = 0;
+	ret->align = align;
+	ret->biggest_member = 0;
+
+	*s = ret;
+
+	return 0;
+}
+
+int dstru_free(struct dstru_struct *s){
+	if (s == NULL)
+		return 1;
+
+	free(s->buffer);
+	free(s);
+	return 0;
+}
+
+/* Convenience functions */
 int dstru_add_uint16(uint16_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT16, (void *) &i, ds);
 }
@@ -307,32 +331,4 @@ int dstru_add_voidp(void *i, struct dstru_struct *ds){
 
 int dstru_add_long(uint64_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT64, (long *) &i, ds);	
-}
-
-/* align = 0 means no packing. 1 means pack all*/
-int dstru_init(int align, struct dstru_struct **s){
-	struct dstru_struct *ret;
-	ret = malloc(sizeof(struct dstru_struct));
-
-	if (ret == NULL || align < 0 || !dstru_is_power_of_two(align) && align != 0)
-		return 1;
-
-	ret->buffer = NULL;
-	ret->size = 0;
-	ret->elem_num = 0;
-	ret->align = align;
-	ret->biggest_member = 0;
-
-	*s = ret;
-
-	return 0;
-}
-
-int dstru_free(struct dstru_struct *s){
-	if (s == NULL)
-		return 1;
-
-	free(s->buffer);
-	free(s);
-	return 0;
 }

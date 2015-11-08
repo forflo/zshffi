@@ -21,7 +21,7 @@
 	his second and c as his last child. */
 struct nary_node *make_node(int cnt, int operation, void *v, int childs, ...);
 
-struct token_value { void *value; int length};
+struct token_value { void *value; int length; };
 
 
 #endif /* PARSER_UTIL */

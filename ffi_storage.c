@@ -1,7 +1,5 @@
 #include "ffi_storage.h"
-#include "ffi_dstru_types.h"
-#include "ffi_dstru_funcs.h"
-#include "ffi_dstru_defines.h"
+#include "ffi_dstru.h"
 
 #define STACK_INITIAL 100
 
@@ -98,27 +96,6 @@ int get_storage(void **res, struct ffi_instruction **s_ops){
     return 0;
 }
 
-char conv_to_cchar();
-uint8_t conv_to_cuchar();
-short conv_to_cshort();
-uint16_t conv_to_cushort();
-int conv_to_cint();
-uint32_t conv_to_cuint();
-clong conv_to_clong();
-int conv_to_culong();
-long long conv_to_clonglong();
-int conv_to_culonglong();
-intmax_t conv_to_cintmax_t();
-uintmax_t conv_to_cuintmax_t();
-size_t conv_to_csize_t();
-int conv_to_cssize_t();
-int conv_to_cptrdiff_t();
-int conv_to_coff_t();
-wchar_t conv_to_cwchar_t();
-float conv_to_cfloat();
-double conv_to_cdouble();
-void *conv_to_voidp();
-
 int add_to_dystru(struct ffi_instruction *s, struct dstru_struct *s){
     long type = s->type;
 
@@ -132,6 +109,102 @@ int add_to_dystru(struct ffi_instruction *s, struct dstru_struct *s){
             dstru_add_uint32(res, s);
             break;
     }
+
+    return 0;
+}
+
+int conv_to_cchar(int8_t *res, struct token_value *val);
+int conv_to_cuchar(uint8_t *res, struct token_value *val);
+int conv_to_cshort(int16_t *res, struct token_value *val);
+int conv_to_cushort(uint16_t *res, struct token_value *val);
+int conv_to_cint(int32_t *res, struct token_value *val);
+int conv_to_cuint(uint32_t *res, struct token_value *val);
+
+int conv_to_clong(*res, struct token_value *val);
+int conv_to_culong(*res, struct token_value *val);
+int conv_to_clonglong(*res, struct token_value *val);
+int conv_to_culonglong(*res, struct token_value *val);
+int conv_to_cfloat(*res, struct token_value *val);
+int conv_to_cdouble(*res, struct token_value *val);
+int *conv_to_voidp(*res, struct token_value *val);
+
+int conv_to_cchar(int8_t *res, struct token_value *val){
+    if (value->length > 0)
+        *res = (int8_t) val->value[0];
+    else 
+        return 1;
+
+    return 0;
+}
+
+int conv_to_cuchar(uint8_t *res, struct token_value *val){
+    *res = (uint8_t) strtol(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_cshort(int16_t *res, struct token_value *val){
+    *res = (int16_t) atoi(val->value);
+
+    return 0;
+}
+
+int conv_to_cushort(uint16_t *res, struct token_value *val){
+    *res = (uint16_t) strtol(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_cint(int32_t *res, struct token_value *val){
+    *res = atoi(val->value);
+
+    return 0;
+}
+
+int conv_to_cuint(uint32_t *res, struct token_value *val){
+    *res = (uint32_t) strtol(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_clong(int64_t *res, struct token_value *val){
+    *res = strtol(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_culong(uint64_t*res, struct token_value *val){
+    *res = strtoul(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_clonglong(long long *res, struct token_value *val){
+    *res = strtoll(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_culonglong(unsigned long long *res, struct token_value *val){
+    *res = strtoull(val->value, NULL, 10);
+
+    return 0;
+}
+
+int conv_to_cfloat(float *res, struct token_value *val){
+    *res = atof(res);
+
+    return 0;
+}
+
+int conv_to_cdouble(double *res, struct token_value *val){
+    *res = atod(res);
+
+    return 0;
+}
+
+int conv_to_voidp(void **res, struct token_value *val){
+    *res = (void *) strtoul(val->value, NULL, 16); 
 
     return 0;
 }

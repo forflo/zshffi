@@ -27,7 +27,6 @@
     F(CTYPE_STRUCT)
 
 #define LIST_NTYPE(F)       \
-    F(NT_SIGNATURE)     \
     F(NT_TYPEANDVAL)    \
     F(NT_SCALAR_ARR)    \
     F(NT_SCALAR)        \

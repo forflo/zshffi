@@ -153,12 +153,9 @@ extern int ffidebug;
     array = 262,
     curlopen = 263,
     curlclose = 264,
-    paropen = 265,
-    parclose = 266,
-    string = 267,
-    c_type = 268,
-    s_type = 269,
-    pipe_del = 270
+    string = 265,
+    c_type = 266,
+    s_type = 267
   };
 #endif
 
@@ -169,10 +166,10 @@ union FFISTYPE
 {
 #line 29 "ffi_parser.y" /* yacc.c:355  */
 
-	void *v;
+	struct token_value *v;
 	struct nary_node *k;
 
-#line 176 "ffi_parser.c" /* yacc.c:355  */
+#line 173 "ffi_parser.c" /* yacc.c:355  */
 };
 
 typedef union FFISTYPE FFISTYPE;
@@ -188,7 +185,7 @@ int ffiparse (struct nary_node **root, void *scan);
 
 /* Copy the second part of user declarations.  */
 
-#line 192 "ffi_parser.c" /* yacc.c:358  */
+#line 189 "ffi_parser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -428,23 +425,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  14
+#define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   39
+#define YYLAST   33
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  13
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  13
+#define YYNRULES  12
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  40
+#define YYNSTATES  35
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   267
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -479,16 +476,15 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+       5,     6,     7,     8,     9,    10,    11,    12
 };
 
 #if FFIDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    66,    68,    72,    74,    78,    80,    82,
-      86,    88,    90,    94
+       0,    62,    62,    64,    68,    70,    74,    76,    78,    82,
+      84,    86,    90
 };
 #endif
 
@@ -498,9 +494,8 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "arrow", "comma", "equals", "pointer",
-  "array", "curlopen", "curlclose", "paropen", "parclose", "string",
-  "c_type", "s_type", "pipe_del", "$accept", "signature", "type_and_val",
-  "tval_list", "scalar", "compound", "value", YY_NULLPTR
+  "array", "curlopen", "curlclose", "string", "c_type", "s_type",
+  "$accept", "type_and_val", "tval_list", "scalar", "compound", "value", YY_NULLPTR
 };
 #endif
 
@@ -510,14 +505,14 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270
+     265,   266,   267
 };
 # endif
 
-#define YYPACT_NINF -18
+#define YYPACT_NINF -12
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-18)))
+  (!!((Yystate) == (-12)))
 
 #define YYTABLE_NINF -1
 
@@ -528,10 +523,10 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       8,    10,    13,     5,   -18,     9,   -18,   -18,    15,    19,
-      20,    18,    24,    25,   -18,     8,     8,     8,    23,    26,
-      21,   -18,    18,    27,   -18,   -18,    -3,     8,     8,    28,
-     -18,     8,   -18,    -2,    -1,   -18,     0,   -18,   -18,   -18
+      11,    10,    13,     4,   -12,   -12,     5,    16,    19,    15,
+      22,    23,   -12,    11,    21,    24,   -12,   -12,    15,    25,
+     -12,    -3,    11,    11,   -12,    11,    11,   -12,    -2,    -1,
+       1,   -12,   -12,   -12,   -12
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -539,22 +534,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     5,     0,     3,     4,     0,     0,
-       0,     0,     0,     0,     1,     0,     0,     0,     0,     0,
-       0,     7,     0,     0,     2,     6,     0,     0,     0,     0,
-       8,     0,    10,     0,     0,    13,     0,    11,    12,     9
+       0,     0,     0,     0,     2,     3,     0,     0,     0,     0,
+       0,     0,     1,     0,     0,     0,    12,     6,     0,     0,
+       4,     0,     0,     0,     7,     0,     0,     9,     0,     0,
+       0,     5,    10,    11,     8
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -18,   -18,    11,   -17,   -18,   -18,    14
+     -12,     0,   -11,   -12,   -12,    -9
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,     5,     6,     7,    21
+      -1,    20,    21,     4,     5,    17
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -562,42 +557,42 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      26,    16,    16,    16,    16,    14,    32,    37,    38,    39,
-      33,    34,    15,    16,    36,     8,     9,    10,    11,    12,
-      13,     1,     2,    17,    18,    19,    24,    25,    20,    22,
-      23,    27,     0,    29,    28,    31,    30,     0,     0,    35
+       3,    26,    26,    26,    12,    26,    27,    32,    33,    24,
+      34,    28,    29,    13,    30,     6,     7,     8,     9,    10,
+      11,    14,     1,     2,    15,    16,    31,    18,    19,    22,
+       0,     0,    23,    25
 };
 
 static const yytype_int8 yycheck[] =
 {
-      17,     4,     4,     4,     4,     0,     9,     9,     9,     9,
-      27,    28,     3,     4,    31,     5,     6,     7,     5,     6,
-       7,    13,    14,     8,     5,     5,    15,    16,    10,     5,
-       5,     8,    -1,    12,     8,     8,    22,    -1,    -1,    11
+       0,     4,     4,     4,     0,     4,     9,     9,     9,    18,
+       9,    22,    23,     8,    25,     5,     6,     7,     5,     6,
+       7,     5,    11,    12,     5,    10,    26,     5,     5,     8,
+      -1,    -1,     8,     8
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    13,    14,    17,    18,    19,    20,    21,     5,     6,
-       7,     5,     6,     7,     0,     3,     4,     8,     5,     5,
-      10,    22,     5,     5,    18,    18,    19,     8,     8,    12,
-      22,     8,     9,    19,    19,    11,    19,     9,     9,     9
+       0,    11,    12,    14,    16,    17,     5,     6,     7,     5,
+       6,     7,     0,     8,     5,     5,    10,    18,     5,     5,
+      14,    15,     8,     8,    18,     8,     4,     9,    15,    15,
+      15,    14,     9,     9,     9
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    16,    17,    18,    18,    19,    19,    20,    20,    20,
-      21,    21,    21,    22
+       0,    13,    14,    14,    15,    15,    16,    16,    16,    17,
+      17,    17,    18
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     3,     1,     1,     1,     3,     3,     4,     6,
-       5,     6,     6,     3
+       0,     2,     1,     1,     1,     3,     3,     4,     6,     5,
+       6,     6,     1
 };
 
 
@@ -1283,78 +1278,72 @@ yyreduce:
     {
         case 2:
 #line 63 "ffi_parser.y" /* yacc.c:1646  */
-    { *root = make_node(sig_cnt++, NT_SIGNATURE, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
-#line 1288 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
+#line 1283 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 67 "ffi_parser.y" /* yacc.c:1646  */
+#line 65 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1294 "ffi_parser.c" /* yacc.c:1646  */
+#line 1289 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 69 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1300 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 1, (yyvsp[0].k));  }
+#line 1295 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 73 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 1, (yyvsp[0].k));  }
-#line 1306 "ffi_parser.c" /* yacc.c:1646  */
+#line 71 "ffi_parser.y" /* yacc.c:1646  */
+    {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
+#line 1301 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 75 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
-#line 1312 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(s_cnt++, NT_SCALAR    , (yyvsp[-2].v), 1, (yyvsp[0].k)); }
+#line 1307 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 79 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(s_cnt++, NT_SCALAR    , (yyvsp[-2].v), 1, (yyvsp[0].k)); }
-#line 1318 "ffi_parser.c" /* yacc.c:1646  */
+#line 77 "ffi_parser.y" /* yacc.c:1646  */
+    {(yyval.k) = make_node(sptr_cnt++, NT_SCALAR_PTR, (yyvsp[-3].v), 1, (yyvsp[0].k)); }
+#line 1313 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 81 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(sptr_cnt++, NT_SCALAR_PTR, (yyvsp[-3].v), 1, (yyvsp[0].k)); }
-#line 1324 "ffi_parser.c" /* yacc.c:1646  */
+#line 79 "ffi_parser.y" /* yacc.c:1646  */
+    {(yyval.k) = make_node(sarr_cnt++, NT_SCALAR_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
+#line 1319 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 83 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(sarr_cnt++, NT_SCALAR_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1330 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(c_cnt++, NT_COMPOUND    , (yyvsp[-4].v), 1, (yyvsp[-1].k)); }
+#line 1325 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 87 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(c_cnt++, NT_COMPOUND    , (yyvsp[-4].v), 1, (yyvsp[-1].k)); }
-#line 1336 "ffi_parser.c" /* yacc.c:1646  */
+#line 85 "ffi_parser.y" /* yacc.c:1646  */
+    {(yyval.k) = make_node(cptr_cnt++, NT_COMPOUND_PTR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
+#line 1331 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 89 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(cptr_cnt++, NT_COMPOUND_PTR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1342 "ffi_parser.c" /* yacc.c:1646  */
+#line 87 "ffi_parser.y" /* yacc.c:1646  */
+    {(yyval.k) = make_node(carr_cnt++, NT_COMPOUND_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
+#line 1337 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 91 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(carr_cnt++, NT_COMPOUND_ARR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1348 "ffi_parser.c" /* yacc.c:1646  */
-    break;
-
-  case 13:
-#line 95 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(val_cnt++, NT_VALUE, (yyvsp[-1].v), 0); }
-#line 1354 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(val_cnt++, NT_VALUE, (yyvsp[0].v), 0); }
+#line 1343 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1358 "ffi_parser.c" /* yacc.c:1646  */
+#line 1347 "ffi_parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1582,5 +1571,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 98 "ffi_parser.y" /* yacc.c:1906  */
+#line 94 "ffi_parser.y" /* yacc.c:1906  */
 

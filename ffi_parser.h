@@ -66,12 +66,9 @@ extern int ffidebug;
     array = 262,
     curlopen = 263,
     curlclose = 264,
-    paropen = 265,
-    parclose = 266,
-    string = 267,
-    c_type = 268,
-    s_type = 269,
-    pipe_del = 270
+    string = 265,
+    c_type = 266,
+    s_type = 267
   };
 #endif
 
@@ -82,10 +79,10 @@ union FFISTYPE
 {
 #line 29 "ffi_parser.y" /* yacc.c:1909  */
 
-	void *v;
+	struct token_value *v;
 	struct nary_node *k;
 
-#line 89 "ffi_parser.h" /* yacc.c:1909  */
+#line 86 "ffi_parser.h" /* yacc.c:1909  */
 };
 
 typedef union FFISTYPE FFISTYPE;
