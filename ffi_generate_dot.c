@@ -22,36 +22,6 @@ static void gen_count(int val);
 static char *gen_get_typestring(int val);
 static int gen_get(int val);
 
-static void gen_count(int val){
-    switch(val){
-        case NT_SIGNATURE   : gen_sig_cnt++     ; break;
-        case NT_TYPEANDVAL  : gen_tval_cnt++    ; break;
-        case NT_SCALAR_ARR  : gen_sarr_cnt++    ; break;
-        case NT_SCALAR      : gen_s_cnt++       ; break;
-        case NT_SCALAR_PTR  : gen_sptr_cnt++    ; break; 
-        case NT_COMPOUND    : gen_c_cnt++       ; break;   
-        case NT_COMPOUND_ARR: gen_carr_cnt++    ; break;
-        case NT_COMPOUND_PTR: gen_cptr_cnt++    ; break;
-        case NT_TVAL_LIST   : gen_tval_lst_cnt++; break;   
-        case NT_VALUE       : gen_val_cnt++     ; break;   
-    } 
-}
-
-static int gen_get(int val){
-    switch(val){
-        case NT_SIGNATURE   : return gen_sig_cnt     ; break;
-        case NT_TYPEANDVAL  : return gen_tval_cnt    ; break;
-        case NT_SCALAR_ARR  : return gen_sarr_cnt    ; break;
-        case NT_SCALAR      : return gen_s_cnt       ; break;
-        case NT_SCALAR_PTR  : return gen_sptr_cnt    ; break; 
-        case NT_COMPOUND    : return gen_c_cnt       ; break;   
-        case NT_COMPOUND_ARR: return gen_carr_cnt    ; break;
-        case NT_COMPOUND_PTR: return gen_cptr_cnt    ; break;
-        case NT_TVAL_LIST   : return gen_tval_lst_cnt; break;   
-        case NT_VALUE       : return gen_val_cnt     ; break;   
-    } 
-}
-
 static int emit_childs(struct nary_node *node){
     int i;
     char parent_name[20] = "";

@@ -13,7 +13,7 @@ void yyerror(struct nary_node **root, void *scanner, const char *str){
 
 extern int ffilex();
 
-int sig_cnt = 0;
+int start_cnt = 0;
 int tval_cnt = 0;
 int tval_lst_cnt = 0;
 int s_cnt = 0;
@@ -51,13 +51,17 @@ int val_cnt = 0;
 %token curlopen curlclose 
 %token string c_type s_type
 
-%type <k> type_and_val
+%type <k> type_and_val start
 %type <k> tval_list scalar value compound
 %type <v> s_type c_type string
 
-%start type_and_val
+%start start 
 
 %%
+
+start               : type_and_val
+                        { *root = make_node(start_cnt++, NT_START, NULL, 1, $1); }
+                    ;
 
 type_and_val        : scalar
                         {$$ = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, $1);  }

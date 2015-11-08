@@ -5,9 +5,9 @@
 #define INS_MAX 1000
 
 #define FFI_BYTECODE(F)     \
-        F(ARR_TO     )      \
-        F(ARR_END    )      \
-        F(PTR_TO     )      \
+        F(ARR_TO)           \
+        F(ARR_END)          \
+        F(PTR_TO)           \
         F(START_STRUCT)     \
         F(START_UNION)      \
         F(MEMBER     )      \
@@ -26,7 +26,7 @@ struct ffi_instruction {
     char *value; 
 };
 
-struct ffi_instruction **genops(struct nary_node *tval_list);
+int genops(struct ffi_instruction ***genops, struct nary_node *tval_list);
 
 int genops_scalar(struct ffi_instruction ins[], 
     int *position, 

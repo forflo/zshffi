@@ -4,6 +4,7 @@
 /* Generator Makro for automatic
    enum and string-table generation */
 #define LIST_TYPE(F) \
+    F(STYPE_NONE)       \
     F(STYPE_CCHAR)      \
     F(STYPE_CUCHAR)     \
     F(STYPE_CSHORT)     \
@@ -27,6 +28,7 @@
     F(CTYPE_STRUCT)
 
 #define LIST_NTYPE(F)       \
+    F(NT_START)         \
     F(NT_TYPEANDVAL)    \
     F(NT_SCALAR_ARR)    \
     F(NT_SCALAR)        \

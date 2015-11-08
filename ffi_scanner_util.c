@@ -1,6 +1,9 @@
 #include "ffi_scanner_util.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+
+#define DEBUG
 
 /* snips off first and last char before duplication */
 struct token_value *make_valueStr(const char *str){
@@ -10,5 +13,8 @@ struct token_value *make_valueStr(const char *str){
     res[strlen(res) - 1] = '\0';
     v->value = res;
     v->length = strlen(res);
+#ifdef DEBUG
+    printf("Token: %s\n", res);
+#endif
 	return v;
 }

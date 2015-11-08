@@ -4,15 +4,20 @@
 #include "ffi_generate_ops.h"
 #include <stdio.h>
 
+#define DEBUG
+
 const char *TYPE_STRING_TAB[] = { LIST_TYPE(GENERATE_STRING) };
 const char *OPERATION_STRING_TAB[] = { FFI_BYTECODE(GENERATE_STRING) };
 const char *NONTERMINAL_STRING_TAB[] = { LIST_NTYPE(GENERATE_STRING) };
 
-void emit_human(struct ffi_instruction **ins, int cnt){
+void emit_human(struct ffi_instruction **ins){
     int i;
 
-    printf("Instruktionen: %d\n", cnt);
-    for (i=0; i<cnt; i++)
+#ifdef DEBUG
+    printf("Insptr: %p\n", ins);
+#endif
+
+    for (i=0; ins[i] != NULL; i++)
         if(ins[i]->operation)
             printf("[op: %s|type: %s |value: %s]\n", 
                 OPERATION_STRING_TAB[ins[i]->operation],
