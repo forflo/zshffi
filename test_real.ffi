@@ -1,4 +1,14 @@
 struct = {
-    cchar = [42],
-    cdouble = [3.141592]
+    cchar = [52],
+    cuchar = [255],
+    cshort = [15644],
+    cushort = [4711],
+    cint = [4711],
+    cuint = [4711],
+    clong = [123123123123],
+    culong = [321321321321],
+    clonglong = [123322],
+    culonglong = [332],
+    cfloat = [47.11],
+    cdouble = [3.181592]
 }

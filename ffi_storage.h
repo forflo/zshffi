@@ -5,6 +5,7 @@
 #include "ffi_dstru.h"
 #include "ffi_parser_util.h"
 
+int get_storage(void **res, struct ffi_instruction **s_ops);
 int add_to_top(struct ffi_instruction *ins, struct dstru_struct *top);
 
 int conv_to_cchar(int8_t *res, struct token_value *val);

@@ -1,0 +1,8 @@
+struct = {
+    cchar = [5],
+    cdouble = [255.255],
+    struct = {
+        cdouble = [47.11123], 
+        cint = [-4711]
+    }
+}

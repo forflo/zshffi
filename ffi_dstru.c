@@ -333,6 +333,6 @@ int dstru_add_voidp(void *i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_VOIDP, i, ds);	
 }
 
-int dstru_add_long(uint64_t i, struct dstru_struct *ds){
+int dstru_add_uint64(uint64_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT64, (long *) &i, ds);	
 }

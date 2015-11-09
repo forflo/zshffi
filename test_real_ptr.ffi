@@ -1,0 +1,16 @@
+struct * = {
+    cchar = [5],
+    cdouble = [255.255],
+    struct * = {
+        struct * = {
+            cdouble = [7431.123],
+            cchar = [?],
+            cint = [-123]
+        },
+        struct * = {
+            cdouble = [431.123],
+            cchar = [/],
+            cint = [-999]
+        }
+    }
+}
