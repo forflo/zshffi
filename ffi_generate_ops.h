@@ -31,7 +31,7 @@ enum ffi_bytecode_op { FFI_BYTECODE(GENERATE_ENUM) };
 struct ffi_instruction {
     enum ffi_bytecode_op operation;
     long type;
-    char *value; 
+    struct token_value *value; 
 };
 
 int genops(struct ffi_instruction ***genops, struct nary_node *tval_list);

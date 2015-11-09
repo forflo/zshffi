@@ -2,6 +2,7 @@
 #include "ffi_generate_ops.h"
 #include "ffi_node_defines.h"
 #include "ffi_generate_ops.h"
+#include "ffi_parser_util.h"
 #include <stdio.h>
 
 #define DEBUG
@@ -14,15 +15,16 @@ void emit_human(struct ffi_instruction **ins){
     int i;
 
 #ifdef DEBUG
-    printf("Insptr: %p\n", ins);
+    printf("Insptr: %p, second check: %p\n", ins, ins[0]->value);
 #endif
+
 
     for (i=0; ins[i] != NULL; i++)
         if(ins[i]->operation)
             printf("[op: %16s | type: %13s | value: %8s]\n", 
                 OPERATION_STRING_TAB[ins[i]->operation],
                 TYPE_STRING_TAB[ins[i]->type],
-                ins[i]->value);
+                (char *) (ins[i]->value != NULL ? ins[i]->value->value : "null"));
         else
             printf("[op: %16s | type: %13s | value: %8s]\n", 
                 OPERATION_STRING_TAB[ins[i]->operation], "none", "none");

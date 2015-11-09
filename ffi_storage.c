@@ -102,7 +102,24 @@ int add_to_top(struct ffi_instruction *ins, struct dstru_struct *top){
 
     switch(type){
         case STYPE_CCHAR:
+            {
+            uint8_t tmp;
+            conv_to_cchar(&tmp, ins->value);
+#ifdef DEBUG
+            printf("add_to_top() %c\n", tmp);
+#endif
+            dstru_add_uint8(tmp, top);
+            }
+            break;
         case STYPE_CINT:
+            {
+            double tmp;
+            conv_to_cdouble(&tmp, ins->value); 
+#ifdef DEBUG
+            printf("add_to_top() %lf\n", tmp);
+#endif
+            dstru_add_double(tmp, top);
+            }
             break;
     }
 

@@ -74,8 +74,7 @@ int genops_scalar(struct ffi_instruction ins[],
     switch (ty){
         case NT_SCALAR: case NT_SCALAR_PTR:
             scalar_temp.value = 
-                (char *) ((struct token_value *) 
-                scalar->nodes[0]->content)->value;
+                scalar->nodes[0]->content;
             break;
         case NT_SCALAR_ARR:
             scalar_temp.type = (long) scalar->node_type;

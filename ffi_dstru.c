@@ -304,6 +304,10 @@ int dstru_free(struct dstru_struct *s){
 	return 0;
 }
 
+int dstru_add_uint8(uint8_t i, struct dstru_struct *ds){
+	return dstru_add_member(DYN_S_UINT8, (void *) &i, ds);
+}
+
 /* Convenience functions */
 int dstru_add_uint16(uint16_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT16, (void *) &i, ds);
