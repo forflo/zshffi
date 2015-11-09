@@ -1,0 +1,4 @@
+struct = {
+    cchar = [42],
+    cdouble = [3.141592]
+}

@@ -19,13 +19,13 @@ void emit_human(struct ffi_instruction **ins){
 
     for (i=0; ins[i] != NULL; i++)
         if(ins[i]->operation)
-            printf("[op: %s|type: %s |value: %s]\n", 
+            printf("[op: %16s | type: %13s | value: %8s]\n", 
                 OPERATION_STRING_TAB[ins[i]->operation],
                 TYPE_STRING_TAB[ins[i]->type],
                 ins[i]->value);
         else
-            printf("[op: %s|type: none|value: none]\n", 
-                OPERATION_STRING_TAB[ins[i]->operation]);
+            printf("[op: %16s | type: %13s | value: %8s]\n", 
+                OPERATION_STRING_TAB[ins[i]->operation], "none", "none");
 }
 
 /* replaces each escaped character with the real character */

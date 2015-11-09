@@ -7,14 +7,21 @@
 #include <stdlib.h>
 
 #define DEBUG
+static int genops_add(struct ffi_instruction ins[], int *position, struct ffi_instruction i);
 
-static const struct ffi_instruction struct_temp_start = {START_STRUCT, STYPE_NONE, NULL};
-static const struct ffi_instruction union_temp_start = {START_UNION, STYPE_NONE, NULL};
-static const struct ffi_instruction struct_temp_end = {END_STRUCT, STYPE_NONE, NULL};
-static const struct ffi_instruction union_temp_end = {END_UNION, STYPE_NONE, NULL};
+static const struct ffi_instruction start_struct = {START_STRUCT, STYPE_NONE, NULL};
+static const struct ffi_instruction start_struct_ptr = {START_STRUCT_PTR, STYPE_NONE, NULL};
+static const struct ffi_instruction start_struct_arr = {START_STRUCT_ARR, STYPE_NONE, NULL};
+static const struct ffi_instruction start_union = {START_UNION, STYPE_NONE, NULL};
+static const struct ffi_instruction start_union_ptr = {START_UNION_PTR, STYPE_NONE, NULL};
+static const struct ffi_instruction start_union_arr = {START_UNION_ARR, STYPE_NONE, NULL};
+static const struct ffi_instruction end_struct = {END_STRUCT, STYPE_NONE, NULL};
+static const struct ffi_instruction end_struct_arr = {END_STRUCT_ARR, STYPE_NONE, NULL};
+static const struct ffi_instruction end_struct_ptr = {END_STRUCT_PTR, STYPE_NONE, NULL};
+static const struct ffi_instruction end_union = {END_UNION, STYPE_NONE, NULL};
+static const struct ffi_instruction end_union_arr= {END_UNION_ARR, STYPE_NONE, NULL};
+static const struct ffi_instruction end_union_ptr = {END_UNION_PTR, STYPE_NONE, NULL};
 static const struct ffi_instruction arr_end_temp = {ARR_END, STYPE_NONE, NULL};
-static const struct ffi_instruction arr_temp = {ARR_TO, STYPE_NONE, NULL};
-static const struct ffi_instruction ptr_temp = {PTR_TO, STYPE_NONE, NULL};
 
 int genops(struct ffi_instruction ***genops, struct nary_node *tval){
     printf("genops(): genops = %p, tval_list = %p\n", genops, tval);
@@ -59,7 +66,7 @@ int genops_scalar(struct ffi_instruction ins[],
 #endif
 
     struct ffi_instruction scalar_temp = { 
-        MEMBER, 
+        MEMBER,
         (long) scalar->content, 
         NULL
     }; 
@@ -71,44 +78,44 @@ int genops_scalar(struct ffi_instruction ins[],
                 scalar->nodes[0]->content)->value;
             break;
         case NT_SCALAR_ARR:
+            scalar_temp.type = (long) scalar->node_type;
             scalar_temp.value = NULL;
             break;
     }
 
     switch (ty){
-        case NT_SCALAR    : 
+        case NT_SCALAR: 
 #ifdef DEBUG
             printf("genops_scalar().plain\n");
 #endif
-            ins[*position] = scalar_temp;
-            (*position)++;
+            scalar_temp.operation = MEMBER;
+            genops_add(ins, position, scalar_temp);
             break;
         case NT_SCALAR_PTR: 
 #ifdef DEBUG
             printf("genops_scalar().ptr\n");
 #endif
 
-            ins[*position] = ptr_temp;
-            (*position)++;
-            ins[*position] = scalar_temp;
-            (*position)++;
+            scalar_temp.operation = MEMBER_PTR;
+            genops_add(ins, position, scalar_temp);
             break;
         case NT_SCALAR_ARR: 
 #ifdef DEBUG
             printf("genops_scalar().arr\n");
 #endif
 
-            ins[*position] = arr_temp;
-            (*position)++;
+            scalar_temp.operation = MEMBER_ARR;
+            scalar_temp.type = (long) scalar->content;
+            genops_add(ins, position, scalar_temp);
             genops_tvallist(ins, position, scalar->nodes[0]);
-            ins[*position] = arr_end_temp;
-            (*position)++;
+            genops_add(ins, position, arr_end_temp);
             break;
     }
 
     return 0;
 }
 
+/* TODO: Find better solution for this */
 int genops_compound(struct ffi_instruction ins[], 
         int *position, 
         struct nary_node *compound){
@@ -118,34 +125,44 @@ int genops_compound(struct ffi_instruction ins[],
 #endif
     long c_type = (long) compound->content;
 
-    switch (ty){
-        case NT_COMPOUND: break;
-        case NT_COMPOUND_ARR:
-            ins[*position] = arr_temp;
-            (*position)++;
-            break;
-        case NT_COMPOUND_PTR:
-            ins[*position] = ptr_temp;
-            (*position)++;
-            break;
-    }
-
     switch(c_type){
         case CTYPE_STRUCT: 
-            ins[*position] = struct_temp_start;
-            (*position)++; 
-            genops_tvallist(ins, position, compound->nodes[0]);
-
-            ins[*position] = struct_temp_end;
-            (*position)++; 
+            switch (ty){
+                case NT_COMPOUND: 
+                    genops_add(ins, position, start_struct);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_struct);
+                    break;
+                case NT_COMPOUND_ARR: 
+                    genops_add(ins, position, start_struct_arr);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_struct_arr);
+                    break;
+                case NT_COMPOUND_PTR: 
+                    genops_add(ins, position, start_struct_ptr);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_struct_ptr);
+                    break;
+            }
             break;
         case CTYPE_UNION: 
-            ins[*position] = union_temp_start; 
-            (*position)++; 
-            genops_tvallist(ins, position, compound->nodes[0]);
-
-            ins[*position] = union_temp_end;
-            (*position)++; 
+            switch (ty){
+                case NT_COMPOUND: 
+                    genops_add(ins, position, start_union);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_union);
+                    break;
+                case NT_COMPOUND_ARR: 
+                    genops_add(ins, position, start_union_arr);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_union_arr);
+                    break;
+                case NT_COMPOUND_PTR: 
+                    genops_add(ins, position, start_union_ptr);
+                    genops_tvallist(ins, position, compound->nodes[0]);
+                    genops_add(ins, position, end_union_ptr);
+                    break;
+            }
             break;
     } 
 
@@ -185,5 +202,13 @@ int genops_tval(struct ffi_instruction ins[],
                         " a scalar nor a compound!\n", NONTERMINAL_STRING_TAB[ty]);
     }
 
+    return 0;
+}
+
+static int genops_add(struct ffi_instruction ins[], 
+        int *position, 
+        struct ffi_instruction i){
+    ins[*position] = i;
+    (*position)++;
     return 0;
 }

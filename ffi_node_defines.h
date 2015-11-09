@@ -15,13 +15,6 @@
     F(STYPE_CULONG)     \
     F(STYPE_CLONGLONG)  \
     F(STYPE_CULONGLONG) \
-    F(STYPE_CINTMAX_T)  \
-    F(STYPE_CUINTMAX_T) \
-    F(STYPE_CSIZE_T)    \
-    F(STYPE_CSSIZE_T)   \
-    F(STYPE_CPTRDIFF_T) \
-    F(STYPE_COFF_T)     \
-    F(STYPE_CWCHAR_T)   \
     F(STYPE_CFLOAT)     \
     F(STYPE_CDOUBLE)    \
     F(CTYPE_UNION)      \
