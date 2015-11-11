@@ -30,6 +30,9 @@ This license slightly differs from the original MIT license.
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
+
+#define DEBUG
 
 #include "ffi_dstru.h"
 #include "ffi_dstru_util.h"
@@ -107,8 +110,7 @@ int dstru_finalize(struct dstru_struct *dest){
 	return 0;
 }
 
-int dstru_add_member(enum dstru_types type, 
-        void *content, 
+int dstru_add_member(enum dstru_types type, void *content, 
         struct dstru_struct *dest){
 
 	int pad_size, new_size;
@@ -133,6 +135,9 @@ int dstru_add_member(enum dstru_types type,
 
 	if(dest->buffer == NULL)
 		return 1;
+
+    /* Update the member table*/
+    dstru_add_entry(dest, pad_size, dstru_sizeof(type, content), false);
 
 	/* Update the biggest_member field if the new field 
 	 	will be bigger than every other field before (dest->buffer) */
@@ -214,8 +219,10 @@ int dstru_add_bytefield(int size, void *content, struct dstru_struct *dest){
 	return 0;
 }
 
-int dstru_add_array(int num, int arr_member_type, 
-		void *content, struct dstru_struct *dest){
+int dstru_add_array(int num, 
+        int arr_member_type, 
+		void *content, 
+        struct dstru_struct *dest){
 	int i;
 
 	if (!dstru_is_power_of_two(dest->align) 
@@ -228,58 +235,85 @@ int dstru_add_array(int num, int arr_member_type,
 		switch(arr_member_type){
 			case DYN_S_UINT8:
 				if (dstru_add_member(arr_member_type, 
-							(uint8_t *) content + i, dest))
+				   (uint8_t *) content + i, dest))
 					return 1;
-
 				break;
 			case DYN_S_UINT16:
 				if (dstru_add_member(arr_member_type, 
 							(uint16_t *) content + i, dest))
 					return 1;
-
 				break;
 			case DYN_S_UINT32:
 				if (dstru_add_member(arr_member_type, 
 							(uint32_t *) content + i, dest))
 					return 1;
-
 				break;
 			case DYN_S_UINT64:
 				if (dstru_add_member(arr_member_type, 
 							(uint64_t *) content + i, dest))
 					return 1;
-
 				break;
 			case DYN_S_FLOAT:
 				if (dstru_add_member(arr_member_type, 
 							(float *) content + i, dest))
 					return 1;
-
 				break;
 			case DYN_S_DOUBLE:
 				if (dstru_add_member(arr_member_type, 
 							(double *) content + i, dest))
 					return 1;
-
 				break;
-			case DYN_S_VOIDP:
-				return 1;
-			case DYN_S_STRUCT:
-				return 1;
-			default : 
-				return 1;
+			case DYN_S_VOIDP: return 1;
+			case DYN_S_STRUCT: return 1;
+			default : return 1;
 		}
 	}
 
 	return 0;
 }
 
+/* structure grows if the space isn't enough */
+int dstru_add_entry(struct dstru_struct *s, int offset, 
+        int size, bool is_dstru){
+    struct dstru_member **mem = &(s->member_table.members);
+
+#ifdef DEBUG
+    printf("dstru_add_entry() %p\n", s);
+    printf("dstru_add_entry() table size :%d member count: %d\n", 
+            s->member_table.members_size, s->member_table.member_count);
+#endif
+    if (s->member_table.member_count == s->member_table.members_size){
+        s->member_table.members_size *= 2;
+#ifdef DEBUG
+        printf("dstru_add_entry() realloc %p to %d\n", *mem, 
+                sizeof(struct dstru_member) * s->member_table.members_size);
+#endif
+        *mem = realloc(*mem, sizeof(struct dstru_member) * s->member_table.members_size);
+        if (mem == NULL)
+            return 1;
+    }
+   
+    struct dstru_member temp = { offset, size, is_dstru }; 
+    (*mem)[s->member_table.member_count++] = temp;
+
+#ifdef DEBUG
+    printf("dstru_add_entry() table size :%d member count: %d\n", 
+            s->member_table.members_size, s->member_table.member_count);
+#endif
+    
+    return 0;
+}
+
 /* Align = 0 means no packing. 1 means pack all without any alignment */
 int dstru_init(int align, struct dstru_struct **s){
 	struct dstru_struct *ret;
+    struct dstru_member *mem;
 	ret = malloc(sizeof(struct dstru_struct));
+    mem = malloc(sizeof(struct dstru_member) * DSTRU_MEMBER_INIT);
+    int i;
 
 	if (ret == NULL 
+        || mem == NULL
         || align < 0 
         || !dstru_is_power_of_two(align) 
         && align != 0) return 1;
@@ -289,6 +323,14 @@ int dstru_init(int align, struct dstru_struct **s){
 	ret->elem_num = 0;
 	ret->align = align;
 	ret->biggest_member = 0;
+
+    memset(mem, 0, sizeof(struct dstru_member) * DSTRU_MEMBER_INIT);    
+    for (i=0; i<DSTRU_MEMBER_INIT; i++)
+        mem[i].is_dstru = false;
+
+    ret->member_table.members = mem;
+    ret->member_table.member_count = 0;
+    ret->member_table.members_size = DSTRU_MEMBER_INIT;
 
 	*s = ret;
 
@@ -300,6 +342,7 @@ int dstru_free(struct dstru_struct *s){
 		return 1;
 
 	free(s->buffer);
+    free(s->member_table.members);
 	free(s);
 	return 0;
 }

@@ -7,10 +7,34 @@
              (type: uint64*) 5000323
            ffi_read <store_var> 
 
-    ffi_read var_1 "@->[0]->uint16"
-    ffi_read var_1 "@->[1].[0]->uint64"
     
-    ffi_read var_1 @[0][2][4]$
+    consider the following ffi code:
+    
+    struct * = {
+        cchar = [5],
+        cdouble = [255.255],
+        struct * = {
+            struct * = {
+                cdouble = [7431.123],
+                cchar = [?],
+                cint = [-123]
+            },
+            struct * = {
+                cdouble = [431.123],
+                cchar = [/],
+                cint = [-999]
+            }
+        }
+    }
+
+    ffi_read var_1 @->[2]->[0]->[1] 
+    => would return the string "?"
+
+    ffi_read var_1 @->[1]
+    => would return the string "255.255"
+
+    ffi_read var_1 @->[2]->[1]->[2]
+    => would return the string "-999"
 
 ## Grammatik
     <signature> ::= <arguments> "->" <return>

@@ -30,6 +30,7 @@ This license slightly differs from the original MIT license.
 #define DSTRU
 
 #include <stdint.h>
+#include <stdbool.h>
 
 
 /* Enum to string mapping generator. */
@@ -105,6 +106,14 @@ enum dstru_types {
 #	define DYN_S_AL_WS 8
 #endif
 
+#define DSTRU_MEMBER_INIT 10
+
+struct dstru_member {
+    int offset;
+    int size;
+    bool is_dstru;
+};
+
 /* align = 0 => The Library takes care of member Alignment
  	align in f(x)=2^x => Alignment will be f(x) 
  	elem_num = Number of first level members
@@ -117,6 +126,11 @@ struct dstru_struct {
 	int elem_num;
 	int align;
 	int biggest_member;
+    struct {
+        struct dstru_member *members; 
+        int member_count;
+        int members_size;
+    } member_table;
 };
 
 /* Adds a member to a dynamic structure without respection correct alignment
@@ -128,10 +142,13 @@ struct dstru_struct {
 		-1 on failure */
 int dstru_add_member(enum dstru_types type, void *content, struct dstru_struct *ds);
 
+int dstru_add_entry(struct dstru_struct *s, int offset, int size, bool is_dstru);
+
 /* Fills the buffer with the required number of padding bytes 
  	Param: ds = instance of an dstru_struct structure
  	Return: 0 if successfull, 1 if not */
 int dstru_finalize(struct dstru_struct *ds);
+
 
 /* For convenience. All these function use dstru_add_member internally */ 
 int dstru_add_uint8(uint8_t i, struct dstru_struct *ds);

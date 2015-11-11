@@ -58,6 +58,12 @@ struct t3foo {
     int c; 
 };
 
+void modify_t3(struct t3 *stru){
+    stru->a = '6';
+    stru->b = 123.123123123;
+    stru->c->b->b = '{';
+}
+
 int main(void){
     struct nary_node *root;
     struct ffi_instruction **instructions;
@@ -74,8 +80,12 @@ int main(void){
     printf("root: %p, root->nodes[0]: %p\n", root, root->nodes[0]);
 #endif
     genops(&instructions, root->nodes[0]);
+
+    printf("\n");
     emit_human(instructions);
     
+
+    printf("\n");
     get_storage(&res, instructions);
 
 //    struct t1 t = *((struct t1 *) res);
@@ -87,7 +97,13 @@ int main(void){
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
 
     struct t3 *t = ((struct t3 *) res);
-    printf("t: %p\n", t);
+    printf("\nVorher t: %p\n", t);
+    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
+    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
+
+    modify_t3(t);
+
+    printf("\nNachher t: %p\n", t);
     printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
     printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
 
