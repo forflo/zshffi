@@ -1,3 +1,8 @@
 *.swp
 pars
 test
+ffi_scanner_location.c
+ffi_scanner_location.h
+ffi_scanner.c
+ffi_parser.c
+scan_test
