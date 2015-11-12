@@ -11,64 +11,67 @@
 #define DEBUG
 
 static struct dstru_struct **vm_stack;
-static int stack_size = STACK_INITIAL;
-static int stack_elem = 0;
+static struct dstru_struct **vm_stack_dstrubig;
 
-static int reset(){
-    int i;
-    stack_size = STACK_INITIAL;
-    stack_elem = 0;
-    vm_stack = realloc(vm_stack, stack_size);
-    if(vm_stack == NULL)
-       return 1;
-    return 0; 
-}
+struct vm_stack {
+    struct dstru_struct **vm_stack;
+    int stack_size;
+    int stack_elem;
+};
 
-static int top(struct dstru_struct **res){
-#ifdef DEBUG
-    printf("top(): %p\n", res);
-#endif
-    if (stack_elem == 0)
+static int stack_init(struct vm_stack **stack){
+    *stack = malloc(sizeof(struct vm_stack));
+    if(stack == NULL)
         return 1;
-    *res = vm_stack[stack_elem - 1]; 
+    
+    (*stack)->vm_stack = malloc(sizeof(struct dstru_struct *) * STACK_INITIAL);
+    (*stack)->stack_size = STACK_INITIAL;
+    (*stack)->stack_elem = 0;
+
+    if((*stack)->vm_stack == NULL)
+        return 1;
+
     return 0;
 }
 
-static int push(struct dstru_struct *e){
+static int top(struct dstru_struct **res, struct vm_stack *stack){
+#ifdef DEBUG
+    printf("top(): %p\n", res);
+#endif
+    if (stack->stack_elem == 0)
+        return 1;
+    *res = stack->vm_stack[stack->stack_elem - 1]; 
+    return 0;
+}
+
+static int push(struct dstru_struct *e, struct vm_stack *stack){
 #ifdef DEBUG
     printf("push(): %p\n", e);
 #endif
-    if (stack_elem < stack_size){
-        vm_stack[stack_elem] = e;
+    if (stack->stack_elem < stack->stack_size){
+        stack->vm_stack[stack->stack_elem] = e;
     } else {
-        stack_size *= 2;
-        vm_stack = realloc(vm_stack, stack_size); 
+        stack->stack_size *= 2;
+        stack->vm_stack = realloc(stack->vm_stack, stack->stack_size); 
         if(vm_stack == NULL)
             return 1;
-        vm_stack[stack_elem] = e;
+        stack->vm_stack[stack->stack_elem] = e;
     }
 
-    stack_elem++;
+    stack->stack_elem++;
 
     return 0;
 }
 
 /* The stack does not shrink! */
-static int pop(struct dstru_struct **res){
+static int pop(struct dstru_struct **res, struct vm_stack *stack){
 #ifdef DEBUG
     printf("pop(): %p\n", res);
 #endif
-    if (stack_elem == 0)
+    if (stack->stack_elem == 0)
         return 1;
-    *res = vm_stack[--stack_elem]; 
+    *res = stack->vm_stack[--stack->stack_elem]; 
     return 0; 
-}
-
-static int stack_init(){
-    vm_stack = malloc(sizeof(struct dstru_struct *) * STACK_INITIAL);
-    if(vm_stack == NULL)
-        return 1;
-    return 0;
 }
 
 int get_storage(void **res, struct ffi_instruction_obj *s_ops){
@@ -78,6 +81,9 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
     if (s_ops == NULL || res == NULL || *res == NULL)
         return 1;
 
+    struct vm_stack *data;
+    struct vm_stack *structure;
+
     struct ffi_instruction cur;
     struct dstru_struct *first;
     struct dstru_struct *temp;
@@ -86,13 +92,14 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
     int first_flag = 0;
     int i;
 
-    if(stack_init() != 0)
+    if(stack_init(&data) != 0 || stack_init(&structure) != 0)
         return 1;
 
     dstru_init(0, &first);
     if (first == NULL)
         return 1;
-    push(first);
+
+    push(first, data);
 
     for (i=0; i<s_ops->instruction_count; cur = s_ops->instructions[i++]){
         switch (cur.operation){
@@ -109,7 +116,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
                 }
 
                 dstru_init(0, &temp);
-                push(temp);
+                push(temp, data);
                 printf("New top: %p\n", temp);
                 
                 break;
@@ -117,11 +124,13 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #ifdef DEBUG
                 printf("get_storage(): END-PTR\n");
 #endif
-                if (stack_elem != 2){
-                    pop(&temp);
+                if (data->stack_elem != 2){
+                    pop(&temp, data);
                     dstru_finalize(temp);
-                    top(&temp2);
+                    top(&temp2, data);
+#ifdef DEBUG
                     printf("???%p %p\n", temp, temp2);
+#endif
                     dstru_add_voidp(temp->buffer, temp2);
                 }
                 break;
@@ -129,7 +138,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #ifdef DEBUG
                 printf("get_storage(): MMEMBER\n");
 #endif
-                top(&temp);
+                top(&temp, data);
                 add_to_top(&cur, temp);
                 break;
             case START_UNION:
@@ -139,7 +148,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
         }
     }
 
-    top(&temp2);
+    top(&temp2, data);
     dstru_finalize(temp2);
     *res = temp2->buffer;
 
