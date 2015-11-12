@@ -34,22 +34,26 @@ struct ffi_instruction {
     struct token_value *value; 
 };
 
-int genops(struct ffi_instruction ***genops, struct nary_node *tval_list);
+struct ffi_instruction_obj {
+    struct ffi_instruction *instructions;
+    int instruction_count;
+    int size;
+};
 
-int genops_scalar(struct ffi_instruction ins[], 
-    int *position, 
+static int genops_insert(struct ffi_instruction_obj *ins, struct ffi_instruction stru);
+
+int genops(struct ffi_instruction_obj **genops, struct nary_node *tval_list);
+
+int genops_scalar(struct ffi_instruction_obj *ins, 
     struct nary_node *scalar);
 
-int genops_tvallist(struct ffi_instruction ins[], 
-    int *position, 
+int genops_tvallist(struct ffi_instruction_obj *ins, 
     struct nary_node *tvallist);
 
-int genops_tval(struct ffi_instruction ins[], 
-    int *position, 
+int genops_tval(struct ffi_instruction_obj *ins, 
     struct nary_node *tval);
 
-int genops_compound(struct ffi_instruction ins[], 
-    int *position, 
+int genops_compound(struct ffi_instruction_obj *ins, 
     struct nary_node *compound);
 
 

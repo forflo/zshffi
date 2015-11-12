@@ -66,7 +66,7 @@ void modify_t3(struct t3 *stru){
 
 int main(void){
     struct nary_node *root;
-    struct ffi_instruction **instructions;
+    struct ffi_instruction_obj *instructions;
     void *res;
 
     ffidebug = 1;

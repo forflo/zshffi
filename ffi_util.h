@@ -7,6 +7,6 @@ const char *TYPE_STRING_TAB[];
 const char *OPERATION_STRING_TAB[];
 const char *NONTERMINAL_STRING_TAB[];
 
-void emit_human(struct ffi_instruction **ins);
+void emit_human(struct ffi_instruction_obj *ins);
 
 #endif /* UTIL */

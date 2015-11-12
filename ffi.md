@@ -36,7 +36,17 @@
     ffi_read var_1 @->[2]->[1]->[2]
     => would return the string "-999"
 
-## Grammatik
+## Grammatik location specifier
+
+    <locspec> ::= @ <descent_list>
+    <descent_list> ::= <descent> |
+                       <descent_list> <descent>
+    <descent> ::= -> [ <number> ]
+    <number> ::= <digit> |
+                 <number> <digit>
+    <digit> ::= 0 | 1 | ... | 9
+
+## Grammatik struktur specifier
     <signature> ::= <arguments> "->" <return>
     <arguments> ::= <tval_list> |
                     <arguments> "|" <tval_list>

@@ -11,9 +11,11 @@ clean:
 all: $(FLEX_SRC) $(BISON_SRC) $(SRC_1) $(SRC_2) $(SRC_3)
 	bison --debug -d $(BISON_SRC)
 	flex --debug $(FLEX_SRC)
+	flex --debug ffi_scanner_location.l
 	gcc -g -o pars $(SRC_1) $(SRC_2) $(SRC_3)
 
 opt: $(FLEX_SRC) $(BISON_SRC) $(SRC_1) $(SRC_2) $(SRC_3)
 	bison -d $(BISON_SRC)
 	flex $(FLEX_SRC)
+	flex ffi_scanner_location.l
 	gcc -g -o pars $(SRC_1) $(SRC_2) $(SRC_3)

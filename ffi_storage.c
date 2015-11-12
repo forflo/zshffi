@@ -71,19 +71,20 @@ static int stack_init(){
     return 0;
 }
 
-int get_storage(void **res, struct ffi_instruction **s_ops){
+int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #ifdef DEBUG
     printf("get_storage(): %p\n", s_ops);
 #endif
     if (s_ops == NULL || res == NULL || *res == NULL)
         return 1;
 
-    struct ffi_instruction *cur;
+    struct ffi_instruction cur;
     struct dstru_struct *first;
     struct dstru_struct *temp;
     struct dstru_struct *temp2;
     int position = 0;
     int first_flag = 0;
+    int i;
 
     if(stack_init() != 0)
         return 1;
@@ -93,8 +94,8 @@ int get_storage(void **res, struct ffi_instruction **s_ops){
         return 1;
     push(first);
 
-    while ((cur = s_ops[position++]) != NULL){
-        switch (cur->operation){
+    for (i=0; i<s_ops->instruction_count; cur = s_ops->instructions[i++]){
+        switch (cur.operation){
             case START_STRUCT: 
                 break;
             case END_STRUCT:
@@ -130,7 +131,7 @@ int get_storage(void **res, struct ffi_instruction **s_ops){
                 printf("get_storage(): MMEMBER\n");
 #endif
                 top(&temp);
-                add_to_top(cur, temp);
+                add_to_top(&cur, temp);
                 break;
             case START_UNION:
                 break;

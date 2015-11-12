@@ -11,23 +11,28 @@ const char *TYPE_STRING_TAB[] = { LIST_TYPE(GENERATE_STRING) };
 const char *OPERATION_STRING_TAB[] = { FFI_BYTECODE(GENERATE_STRING) };
 const char *NONTERMINAL_STRING_TAB[] = { LIST_NTYPE(GENERATE_STRING) };
 
-void emit_human(struct ffi_instruction **ins){
+void emit_human(struct ffi_instruction_obj *ins){
     int i;
 
 #ifdef DEBUG
-    printf("Insptr: %p, second check: %p\n", ins, ins[0]->value);
+    printf("Insptr: %p, second check: %p\n", ins, ins->instructions[0].value);
 #endif
 
 
-    for (i=0; ins[i] != NULL; i++)
-        if(ins[i]->operation)
+    for (i=0; i<ins->instruction_count; i++)
+        if(ins->instructions[i].operation)
             printf("[op: %16s | type: %13s | value: %8s]\n", 
-                OPERATION_STRING_TAB[ins[i]->operation],
-                TYPE_STRING_TAB[ins[i]->type],
-                (char *) (ins[i]->value != NULL ? ins[i]->value->value : "null"));
+                OPERATION_STRING_TAB[ins->instructions[i].operation],
+                TYPE_STRING_TAB[ins->instructions[i].type],
+                (char *) 
+                    (ins->instructions[i].value != NULL ? 
+                        ins->instructions[i].value->value : 
+                        "null"));
         else
             printf("[op: %16s | type: %13s | value: %8s]\n", 
-                OPERATION_STRING_TAB[ins[i]->operation], "none", "none");
+                OPERATION_STRING_TAB[ins->instructions[i].operation], 
+                "none", 
+                "none");
 }
 
 /* replaces each escaped character with the real character */
@@ -36,4 +41,3 @@ int unescape(char **dest_string, const char *src){
 
     return 0;
 }
-
