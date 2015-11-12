@@ -96,10 +96,9 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 
     for (i=0; i<s_ops->instruction_count; cur = s_ops->instructions[i++]){
         switch (cur.operation){
-            case START_STRUCT: 
-                break;
-            case END_STRUCT:
-                break;
+            /* Will be flattened */
+            case START_STRUCT: break;
+            case END_STRUCT: break;
             case START_STRUCT_PTR:
 #ifdef DEBUG
                 printf("get_storage(): PTR\n");

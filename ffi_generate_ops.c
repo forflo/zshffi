@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INS_LIST_INIT 1000
-
 #define DEBUG
 
 static const struct ffi_instruction start_struct = {START_STRUCT, STYPE_NONE, NULL};
@@ -25,26 +23,35 @@ static const struct ffi_instruction end_union_ptr = {END_UNION_PTR, STYPE_NONE, 
 static const struct ffi_instruction arr_end_temp = {ARR_END, STYPE_NONE, NULL};
 
 int genops(struct ffi_instruction_obj **genops, struct nary_node *tval){
+#ifdef DEBUG
     printf("genops(): genops = %p, tval_list = %p\n", genops, tval);
+#endif
 
-    struct ffi_instruction_obj *instructions = malloc(sizeof(struct ffi_instruction_obj *));
-
-    if (instructions == NULL){
-        *genops = NULL;
-        return 0;
-    }
+    struct ffi_instruction_obj *instructions = 
+        malloc(sizeof(struct ffi_instruction_obj *));
 
     struct ffi_instruction_obj temp = { 
         malloc(sizeof(struct ffi_instruction) * INS_MAX), 
         0, 
         INS_MAX
     };
+
+    if (!instructions) { *genops = NULL; return 1; }
+    if (!temp.instructions) { *genops = NULL; return 1; }
+
     *instructions = temp;
 
+#ifdef DEBUG
+    printf("genops(): ins obj: %p instructions: %p size: %d count: %d\n", 
+            instructions,
+            instructions->instructions, 
+            instructions->size, 
+            instructions->instruction_count);
+#endif
 
-    if (!genops_tval(instructions, tval)){
+    if (genops_tval(instructions, tval)){
         *genops = NULL;
-        return 0;
+        return 1;
     }
 
     *genops = instructions;
@@ -58,14 +65,20 @@ int genops(struct ffi_instruction_obj **genops, struct nary_node *tval){
 
 static int genops_insert(struct ffi_instruction_obj *ins, 
         struct ffi_instruction stru){
+#ifdef DEBUG
+    printf("genops_insert() ins %p, ins_list: %p size: %d and count: %d\n", 
+            ins, ins->instructions, ins->size, ins->instruction_count);
+#endif
     if (ins->instruction_count == ins->size){
         ins->size *= 2;
+#ifdef DEBUG
+    printf("genops_insert() %p enlarging to: %d\n", ins, ins->size);
+#endif
         ins->instructions = realloc(ins->instructions, 
                 sizeof(struct ffi_instruction) * ins->size);
     }
 
     ins->instructions[ins->instruction_count++] = stru;
-
     return 0;
 }
 
@@ -125,7 +138,6 @@ int genops_scalar(struct ffi_instruction_obj *ins,
     return 0;
 }
 
-/* TODO: Find better solution for this */
 int genops_compound(struct ffi_instruction_obj *ins, 
         struct nary_node *compound){
     int ty = compound->node_type;
@@ -181,7 +193,8 @@ int genops_compound(struct ffi_instruction_obj *ins,
 int genops_tvallist(struct ffi_instruction_obj *ins, 
         struct nary_node *tvallist){
 #ifdef DEBUG
-    printf("genops_tvallist() Node_type: [%s]\n", NONTERMINAL_STRING_TAB[tvallist->node_type]);
+    printf("genops_tvallist() Node_type: [%s]\n", 
+            NONTERMINAL_STRING_TAB[tvallist->node_type]);
 #endif
     if (tvallist->nnode == 2){
         genops_tvallist(ins, tvallist->nodes[0]);
@@ -189,6 +202,9 @@ int genops_tvallist(struct ffi_instruction_obj *ins,
     } else {
         genops_tval(ins, tvallist->nodes[0]);
     }
+
+
+    return 0;
 }
 
 int genops_tval(struct ffi_instruction_obj *ins, 
@@ -198,7 +214,6 @@ int genops_tval(struct ffi_instruction_obj *ins,
 #endif
     int ty = tval->nodes[0]->node_type;
 
-
     if (ty == NT_SCALAR || ty == NT_SCALAR_PTR || ty == NT_SCALAR_ARR){
         genops_scalar(ins, tval->nodes[0]);
     } else if (ty == NT_COMPOUND || ty == NT_COMPOUND_PTR || ty == NT_COMPOUND_ARR) {
@@ -207,6 +222,7 @@ int genops_tval(struct ffi_instruction_obj *ins,
         /* should really not happen!!! */
         fprintf(stderr, "Panic! Node [%s] is neither" 
                         " a scalar nor a compound!\n", NONTERMINAL_STRING_TAB[ty]);
+        return 1;
     }
 
     return 0;

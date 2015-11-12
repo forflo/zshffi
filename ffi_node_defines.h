@@ -2,7 +2,8 @@
 #define NODE_DEFINES
 
 /* Generator Makro for automatic
-   enum and string-table generation */
+   enum and string-table generation.
+   This is also commonly known as X-Macro */
 #define LIST_TYPE(F) \
     F(STYPE_NONE)       \
     F(STYPE_CCHAR)      \

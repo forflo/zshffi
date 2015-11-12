@@ -2,4 +2,4 @@ struct = {
     struct = {
         cuchar = [foobar]
     }
-} -> cuchar = [?]
+}

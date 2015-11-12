@@ -97,4 +97,4 @@ struct * = {
         cchar * = [foobar],
         cuchar* = [zsh_functionname]
     }
-}, cfloat = [0.53], cint = [32] -> cuint = [?]
+}

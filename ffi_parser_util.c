@@ -7,7 +7,6 @@
 
 static const char *NODETYPE_STRING_TAB[] = { LIST_NTYPE(GENERATE_STRING) };
 
-/* TODO: Adapto to new value struct*/
 struct nary_node *make_node(int cnt, int node_type, void *v, int childs, ...){
 	va_list args;
 	int i;

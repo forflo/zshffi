@@ -127,4 +127,4 @@ struct = {
 }
     
 }
-}, cchar = [f], cchar = [foawer], clong = [300] -> cuchar = [3]
+}

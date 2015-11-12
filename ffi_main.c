@@ -95,6 +95,7 @@ int main(void){
 
 //    struct t2 t = *((struct t2 *) res);
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
+    printf("Storage ok!");
 
     struct t3 *t = ((struct t3 *) res);
     printf("\nVorher t: %p\n", t);
