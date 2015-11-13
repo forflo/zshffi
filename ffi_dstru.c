@@ -68,21 +68,32 @@ int dstru_padding(enum dstru_types type, struct dstru_struct *s){
 		return 1;
 
     switch (s->align) {
-        case 1: return 0; break;
-        case 0: switch(type){
-		    	case DYN_S_UINT8:  return 0;
-		    	case DYN_S_UINT16: alignment = DYN_S_AL_UINT16; break;
-		    	case DYN_S_UINT32: alignment = DYN_S_AL_UINT32; break;
-		    	case DYN_S_UINT64: alignment = DYN_S_AL_UINT64; break;
-		    	case DYN_S_FLOAT:  alignment = DYN_S_AL_FLOAT; break;
-		    	case DYN_S_DOUBLE: alignment = DYN_S_AL_DOUBLE; break;
-		    	case DYN_S_VOIDP:  alignment = DYN_S_AL_VOIDP; break;
-		    }
+        case 1: 
+            return 0; 
             break;
-        default: alignment = s->align; break;
+        case 0: 
+            alignment = dstru_padding_primitive(type); 
+            if (alignment == 0)
+                return 0;
+            break;
+        default: 
+            alignment = s->align; 
+            break;
 	}
 
     return (alignment - (s->size % alignment)) % alignment;
+}
+
+int dstru_padding_primitive(enum dstru_types type){
+    switch(type){
+		case DYN_S_UINT8:  return 0;
+		case DYN_S_UINT16: return DYN_S_AL_UINT16; break;
+		case DYN_S_UINT32: return DYN_S_AL_UINT32; break;
+		case DYN_S_UINT64: return DYN_S_AL_UINT64; break;
+		case DYN_S_FLOAT:  return DYN_S_AL_FLOAT;  break;
+		case DYN_S_DOUBLE: return DYN_S_AL_DOUBLE; break;
+		case DYN_S_VOIDP:  return DYN_S_AL_VOIDP;  break;
+	}
 }
 
 /* Adds remaining padding bytes to the structure if it isn't

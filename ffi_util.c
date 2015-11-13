@@ -1,8 +1,10 @@
-#include "ffi_util.h"
 #include "ffi_generate_ops.h"
+#include "ffi_util.h"
 #include "ffi_node_defines.h"
 #include "ffi_generate_ops.h"
 #include "ffi_parser_util.h"
+#include "ffi_dstru.h"
+
 #include <stdio.h>
 
 #define DEBUG
@@ -33,6 +35,27 @@ void emit_human(struct ffi_instruction_obj *ins){
                 OPERATION_STRING_TAB[ins->instructions[i].operation], 
                 "none", 
                 "none");
+}
+
+enum dstru_types ffi_dstru_bridge(enum type stype){
+#ifdef DEBUG
+    printf("ffi_dstru_bridge()");
+#endif
+    switch(stype){
+        case STYPE_CCHAR: return DYN_S_UINT8; break;
+        case STYPE_CUCHAR: return DYN_S_UINT8; break;
+        case STYPE_CSHORT: return DYN_S_UINT16; break;
+        case STYPE_CUSHORT: return DYN_S_UINT16; break;
+        case STYPE_CINT: return DYN_S_UINT32; break;
+        case STYPE_CUINT: return DYN_S_UINT32; break;
+        case STYPE_CLONG: return DYN_S_UINT64; break;
+        case STYPE_CULONG: return DYN_S_UINT64; break;
+        case STYPE_CLONGLONG: return DYN_S_UINT64; break;
+        case STYPE_CULONGLONG: return DYN_S_UINT64; break;
+        case STYPE_CFLOAT: return DYN_S_FLOAT; break;
+        case STYPE_CDOUBLE: return DYN_S_DOUBLE; break;
+    }
+    return -1;
 }
 
 /* replaces each escaped character with the real character */

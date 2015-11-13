@@ -190,6 +190,7 @@ int dstru_free(struct dstru_struct *s);
 			s->align is a power of two.
 		2) type can only be the values DYN_S_* defined in dstru_defines.h */
 int dstru_padding(enum dstru_types type, struct dstru_struct *s);
+int dstru_padding_primitive(enum dstru_types type);
 /* Helper function for dstru_add_member.
  	returns the size of a #defined type.
 	-----------------------------------
@@ -197,5 +198,6 @@ int dstru_padding(enum dstru_types type, struct dstru_struct *s);
  		s = instance of an dstru_struct structrue 
  	Return: Number of bytes occupied by the type */
 int dstru_sizeof(enum dstru_types type, struct dstru_struct *s);
+
 
 #endif /* DSTRU */

@@ -10,52 +10,50 @@
 #define STACK_INITIAL 100
 #define DEBUG
 
-static struct dstru_struct **vm_stack;
-static struct dstru_struct **vm_stack_dstrubig;
 
-struct vm_stack {
-    struct dstru_struct **vm_stack;
+struct ffi_stack {
+    struct dstru_struct **dstru_stack;
     int stack_size;
     int stack_elem;
 };
 
-static int stack_init(struct vm_stack **stack){
-    *stack = malloc(sizeof(struct vm_stack));
+static int stack_init(struct ffi_stack **stack){
+    *stack = malloc(sizeof(struct ffi_stack));
     if(stack == NULL)
         return 1;
     
-    (*stack)->vm_stack = malloc(sizeof(struct dstru_struct *) * STACK_INITIAL);
+    (*stack)->dstru_stack = malloc(sizeof(struct dstru_struct *) * STACK_INITIAL);
     (*stack)->stack_size = STACK_INITIAL;
     (*stack)->stack_elem = 0;
 
-    if((*stack)->vm_stack == NULL)
+    if((*stack)->dstru_stack == NULL)
         return 1;
 
     return 0;
 }
 
-static int top(struct dstru_struct **res, struct vm_stack *stack){
+static int top(struct dstru_struct **res, struct ffi_stack *stack){
 #ifdef DEBUG
     printf("top(): %p\n", res);
 #endif
     if (stack->stack_elem == 0)
         return 1;
-    *res = stack->vm_stack[stack->stack_elem - 1]; 
+    *res = stack->dstru_stack[stack->stack_elem - 1]; 
     return 0;
 }
 
-static int push(struct dstru_struct *e, struct vm_stack *stack){
+static int push(struct dstru_struct *e, struct ffi_stack *stack){
 #ifdef DEBUG
     printf("push(): %p\n", e);
 #endif
     if (stack->stack_elem < stack->stack_size){
-        stack->vm_stack[stack->stack_elem] = e;
+        stack->dstru_stack[stack->stack_elem] = e;
     } else {
         stack->stack_size *= 2;
-        stack->vm_stack = realloc(stack->vm_stack, stack->stack_size); 
-        if(vm_stack == NULL)
+        stack->dstru_stack = realloc(stack->dstru_stack, stack->stack_size); 
+        if(stack->dstru_stack == NULL)
             return 1;
-        stack->vm_stack[stack->stack_elem] = e;
+        stack->dstru_stack[stack->stack_elem] = e;
     }
 
     stack->stack_elem++;
@@ -64,13 +62,13 @@ static int push(struct dstru_struct *e, struct vm_stack *stack){
 }
 
 /* The stack does not shrink! */
-static int pop(struct dstru_struct **res, struct vm_stack *stack){
+static int pop(struct dstru_struct **res, struct ffi_stack *stack){
 #ifdef DEBUG
     printf("pop(): %p\n", res);
 #endif
     if (stack->stack_elem == 0)
         return 1;
-    *res = stack->vm_stack[--stack->stack_elem]; 
+    *res = stack->dstru_stack[--stack->stack_elem]; 
     return 0; 
 }
 
@@ -81,8 +79,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
     if (s_ops == NULL || res == NULL || *res == NULL)
         return 1;
 
-    struct vm_stack *data;
-    struct vm_stack *structure;
+    struct ffi_stack *data;
 
     struct ffi_instruction cur;
     struct dstru_struct *first;
@@ -92,7 +89,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
     int first_flag = 0;
     int i;
 
-    if(stack_init(&data) != 0 || stack_init(&structure) != 0)
+    if(stack_init(&data) != 0)
         return 1;
 
     dstru_init(0, &first);
@@ -167,6 +164,7 @@ int add_to_top(struct ffi_instruction *ins, struct dstru_struct *top){
             printf("add_to_top() cchar: %hhc\n", tmp);
 #endif
             dstru_add_uint8(tmp, top);
+            printf("AFTER!\n");
             }
             break;
         case STYPE_CUCHAR:
