@@ -1,6 +1,8 @@
 #ifndef OFFSET_TABLE
 #define OFFSET_TABLE
 
+#include "ffi_generate_ops.h"
+
 struct offset_member {
     int offset;
     int size;
@@ -14,5 +16,8 @@ struct offset_table {
     int member_count;
     int table_size;
 };
+
+int add_to_table_otable(struct offset_table *src, struct offset_table *dest);
+int add_to_table(struct ffi_instruction *ins, struct offset_table *tbl);
 
 #endif /* OFFSET_TABLE */

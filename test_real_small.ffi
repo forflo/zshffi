@@ -1,0 +1,4 @@
+struct * = {
+    cchar = [5],
+    cdouble = [255.255]
+}

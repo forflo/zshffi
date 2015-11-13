@@ -6,3 +6,4 @@ ffi_scanner_location.h
 ffi_scanner.c
 ffi_parser.c
 scan_test
+ntest
