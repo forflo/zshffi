@@ -2,6 +2,7 @@
 #include "ffi_nary_tree.h"
 #include "ffi_node_defines.h"
 #include "ffi_generate_dot.h"
+#include "ffi_offset_table.h"
 #include "ffi_generate_ops.h"
 #include "ffi_storage.h"
 #include "ffi_util.h"
@@ -67,6 +68,7 @@ void modify_t3(struct t3 *stru){
 int main(void){
     struct nary_node *root;
     struct ffi_instruction_obj *instructions;
+    struct offset_table *tbl;
     void *res;
 
     ffidebug = 1;
@@ -83,10 +85,16 @@ int main(void){
 
     printf("\n");
     emit_human(instructions);
-    
 
     printf("\n");
-    get_storage(&res, instructions);
+    gentbl(instructions, &tbl);
+
+    printf("\n");
+    emit_human_otbl(tbl, 0);
+
+
+//  printf("\n");
+//  get_storage(&res, instructions);
 
 //    struct t1 t = *((struct t1 *) res);
 //    printf("foo: %hhc | bar: %hhu | baz: %hi | moo: %hu\n", t.a, t.b, t.c, t.d);
@@ -95,19 +103,19 @@ int main(void){
 
 //    struct t2 t = *((struct t2 *) res);
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
-    printf("Storage ok!");
-
-    struct t3 *t = ((struct t3 *) res);
-    printf("\nVorher t: %p\n", t);
-    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
-    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
-
-    modify_t3(t);
-
-    printf("\nNachher t: %p\n", t);
-    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
-    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
-
+//    printf("Storage ok!");
+//
+//    struct t3 *t = ((struct t3 *) res);
+//    printf("\nVorher t: %p\n", t);
+//    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
+//    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
+//
+//    modify_t3(t);
+//
+//    printf("\nNachher t: %p\n", t);
+//    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
+//    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
+//
     ffilex_destroy(ffi_scan);
 
     return EXIT_SUCCESS;

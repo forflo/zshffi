@@ -10,17 +10,10 @@
 
 static const struct ffi_instruction start_struct = {START_STRUCT, STYPE_NONE, NULL};
 static const struct ffi_instruction start_struct_ptr = {START_STRUCT_PTR, STYPE_NONE, NULL};
-static const struct ffi_instruction start_struct_arr = {START_STRUCT_ARR, STYPE_NONE, NULL};
-static const struct ffi_instruction start_union = {START_UNION, STYPE_NONE, NULL};
-static const struct ffi_instruction start_union_ptr = {START_UNION_PTR, STYPE_NONE, NULL};
-static const struct ffi_instruction start_union_arr = {START_UNION_ARR, STYPE_NONE, NULL};
 static const struct ffi_instruction end_struct = {END_STRUCT, STYPE_NONE, NULL};
-static const struct ffi_instruction end_struct_arr = {END_STRUCT_ARR, STYPE_NONE, NULL};
 static const struct ffi_instruction end_struct_ptr = {END_STRUCT_PTR, STYPE_NONE, NULL};
 static const struct ffi_instruction end_union = {END_UNION, STYPE_NONE, NULL};
-static const struct ffi_instruction end_union_arr= {END_UNION_ARR, STYPE_NONE, NULL};
 static const struct ffi_instruction end_union_ptr = {END_UNION_PTR, STYPE_NONE, NULL};
-static const struct ffi_instruction arr_end_temp = {ARR_END, STYPE_NONE, NULL};
 
 int genops(struct ffi_instruction_obj **genops, struct nary_node *tval){
 #ifdef DEBUG
@@ -100,10 +93,6 @@ int genops_scalar(struct ffi_instruction_obj *ins,
             scalar_temp.value = 
                 scalar->nodes[0]->content;
             break;
-        case NT_SCALAR_ARR:
-            scalar_temp.type = (long) scalar->node_type;
-            scalar_temp.value = NULL;
-            break;
     }
 
     switch (ty){
@@ -121,17 +110,6 @@ int genops_scalar(struct ffi_instruction_obj *ins,
 
             scalar_temp.operation = MEMBER_PTR;
             genops_insert(ins, scalar_temp);
-            break;
-        case NT_SCALAR_ARR: 
-#ifdef DEBUG
-            printf("genops_scalar().arr\n");
-#endif
-
-            scalar_temp.operation = MEMBER_ARR;
-            scalar_temp.type = (long) scalar->content;
-            genops_insert(ins, scalar_temp);
-            genops_tvallist(ins, scalar->nodes[0]);
-            genops_insert(ins, arr_end_temp);
             break;
     }
 
@@ -154,34 +132,10 @@ int genops_compound(struct ffi_instruction_obj *ins,
                     genops_tvallist(ins, compound->nodes[0]);
                     genops_insert(ins, end_struct);
                     break;
-                case NT_COMPOUND_ARR: 
-                    genops_insert(ins, start_struct_arr);
-                    genops_tvallist(ins, compound->nodes[0]);
-                    genops_insert(ins, end_struct_arr);
-                    break;
                 case NT_COMPOUND_PTR: 
                     genops_insert(ins, start_struct_ptr);
                     genops_tvallist(ins, compound->nodes[0]);
                     genops_insert(ins, end_struct_ptr);
-                    break;
-            }
-            break;
-        case CTYPE_UNION: 
-            switch (ty){
-                case NT_COMPOUND: 
-                    genops_insert(ins, start_union);
-                    genops_tvallist(ins, compound->nodes[0]);
-                    genops_insert(ins, end_union);
-                    break;
-                case NT_COMPOUND_ARR: 
-                    genops_insert(ins, start_union_arr);
-                    genops_tvallist(ins, compound->nodes[0]);
-                    genops_insert(ins, end_union_arr);
-                    break;
-                case NT_COMPOUND_PTR: 
-                    genops_insert(ins, start_union_ptr);
-                    genops_tvallist(ins, compound->nodes[0]);
-                    genops_insert(ins, end_union_ptr);
                     break;
             }
             break;
@@ -214,9 +168,9 @@ int genops_tval(struct ffi_instruction_obj *ins,
 #endif
     int ty = tval->nodes[0]->node_type;
 
-    if (ty == NT_SCALAR || ty == NT_SCALAR_PTR || ty == NT_SCALAR_ARR){
+    if (ty == NT_SCALAR || ty == NT_SCALAR_PTR){
         genops_scalar(ins, tval->nodes[0]);
-    } else if (ty == NT_COMPOUND || ty == NT_COMPOUND_PTR || ty == NT_COMPOUND_ARR) {
+    } else if (ty == NT_COMPOUND || ty == NT_COMPOUND_PTR) {
         genops_compound(ins, tval->nodes[0]);
     } else {
         /* should really not happen!!! */

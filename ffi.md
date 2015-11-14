@@ -29,15 +29,13 @@
     <type_and_val> ::= <scalar> | <compound>
 
     <scalar> ::= <s_type> = <value> |
-                 <s_type> * = <value> |
-                 <s_type> @ = { <tval_list> }
+                 <s_type> * = <value>
 
     <compound> ::= <c_type> = { <tval_list> }
                    <c_type> * = { <tval_list> }
-                   <c_type> @ = { <tval_list> }
 
     <value> ::= [ <string> ]
-    <c_type> ::= union | struct
+    <c_type> ::= struct
     <s_type> ::= cchar       cuchar      cshort      cushort     cint        
                  cuint       clong       culong      clonglong   culonglong  
                  cfloat      cdouble     voidp

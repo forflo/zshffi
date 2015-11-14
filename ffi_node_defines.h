@@ -24,11 +24,9 @@
 #define LIST_NTYPE(F)       \
     F(NT_START)         \
     F(NT_TYPEANDVAL)    \
-    F(NT_SCALAR_ARR)    \
     F(NT_SCALAR)        \
     F(NT_SCALAR_PTR)    \
     F(NT_COMPOUND)      \
-    F(NT_COMPOUND_ARR)  \
     F(NT_COMPOUND_PTR)  \
     F(NT_TVAL_LIST)     \
     F(NT_VALUE)

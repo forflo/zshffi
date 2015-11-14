@@ -5,21 +5,12 @@
 #define INS_MAX 1000
 
 #define FFI_BYTECODE(F)         \
-        F(ARR_TO)               \
-        F(ARR_END)              \
         F(START_STRUCT_PTR)     \
-        F(START_STRUCT_ARR)     \
         F(START_STRUCT)         \
-        F(START_UNION_ARR)      \
-        F(START_UNION_PTR)      \
-        F(START_UNION)          \
         F(MEMBER_PTR)           \
-        F(MEMBER_ARR)           \
         F(MEMBER)               \
         F(END_STRUCT_PTR)       \
-        F(END_STRUCT_ARR)       \
         F(END_STRUCT)           \
-        F(END_UNION_ARR)        \
         F(END_UNION_PTR)        \
         F(END_UNION)            \
 

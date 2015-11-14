@@ -24,11 +24,9 @@
 /* Symbols */
 
 pointer "*"
-array "@"
 equals "="
 curlopen "{"
 curlclose "}"
-arrow "->"
 comma ","
 
 /* FFI Keywords */
@@ -81,9 +79,7 @@ string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 {equals}        { return(equals);    }
 {curlopen}      { return(curlopen);  }
 {curlclose}     { return(curlclose); }
-{arrow}         { return(arrow);     }
 {comma}         { return(comma);     }
-{array}         { return(array);     }
 
 {string}        { yylval_param->v = make_valueStr(yytext); return(string); }
 

@@ -47,7 +47,7 @@ int val_cnt = 0;
 #define YYSTYPE FFISTYPE
 }
 
-%token arrow comma equals pointer array 
+%token arrow comma equals pointer
 %token curlopen curlclose 
 %token string c_type s_type
 
@@ -79,16 +79,12 @@ scalar              : s_type equals value
                         {$$ = make_node(s_cnt++, NT_SCALAR    , $1, 1, $3); }
                     | s_type pointer equals value
                         {$$ = make_node(sptr_cnt++, NT_SCALAR_PTR, $1, 1, $4); }
-                    | s_type array   equals curlopen tval_list  curlclose
-                        {$$ = make_node(sarr_cnt++, NT_SCALAR_ARR, $1, 1, $5); }
                     ;
 
 compound            : c_type equals curlopen tval_list curlclose
                         {$$ = make_node(c_cnt++, NT_COMPOUND    , $1, 1, $4); }
                     | c_type pointer equals curlopen tval_list curlclose
                         {$$ = make_node(cptr_cnt++, NT_COMPOUND_PTR, $1, 1, $5); }
-                    | c_type array equals curlopen tval_list curlclose
-                        {$$ = make_node(carr_cnt++, NT_COMPOUND_ARR, $1, 1, $5); }
                     ;
 
 value               : string

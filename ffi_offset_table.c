@@ -78,6 +78,7 @@ static int table_init(struct offset_table **tbl){
     if (*tbl == NULL)
         return 1;
     (*tbl)->member_count = 0;
+    (*tbl)->structure_size = 0;
     (*tbl)->table_size = INIT_SIZE;
     (*tbl)->members = malloc(sizeof(struct offset_member) * INIT_SIZE);
     if ((*tbl)->members == NULL)
@@ -86,7 +87,7 @@ static int table_init(struct offset_table **tbl){
     return 0;
 }
 
-static int table_add_entry(struct offset_table *tbl, struct offset_member mem){
+static int table_add_entry(struct offset_table *tbl, struct offset_member entry){
     if(tbl->member_count == tbl->table_size){
         tbl->table_size *= 2;
         tbl->members = realloc(tbl->members, 
@@ -95,7 +96,7 @@ static int table_add_entry(struct offset_table *tbl, struct offset_member mem){
             return 1;
     }
 
-    tbl->members[tbl->member_count++] = mem;
+    tbl->members[tbl->member_count++] = entry;
 
     return 0;
 }
@@ -104,13 +105,13 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
     struct offset_table *result;
     struct offset_table *temp;
     struct offset_table *temp2;
+    struct offset_stack *ostack;
     struct ffi_instruction cur;
     int i;
 
     if (table_init(&result) != 0)
         return 1;
 
-    struct offset_stack *ostack;
     if(stack_init(&ostack) != 0)
         return 1;
     
@@ -125,7 +126,6 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
 #endif
                 table_init(&temp);
                 push(temp, ostack);
-
                 break;
             case END_STRUCT_PTR:
 #ifdef DEBUG
@@ -134,7 +134,6 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
                 pop(&temp, ostack);
                 top(&temp2, ostack);
                 add_to_table_otable(temp, temp2);
-
                 break;
             case MEMBER:
 #ifdef DEBUG
@@ -142,16 +141,6 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
 #endif
                 top(&temp2, ostack);
                 add_to_table(&cur, temp2);
-
-                break;
-            case START_UNION:
-                break;
-            case END_UNION:
-                break;
-            default:
-#ifdef DEBUG
-                fprintf(stderr, "Currently not implemented!\n");
-#endif
                 break;
         }
     }
@@ -163,7 +152,8 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
 }
 
 static int get_offset(enum dstru_types dt, struct offset_table *tbl){
-    struct dstru_struct dstru_temp = { NULL, 0, 0, 0, 0, NULL, 0, 0 };
+    struct dstru_struct dstru_temp = 
+        { NULL, tbl->structure_size, 0, 0, 0, NULL, 0, 0 };
     return tbl->structure_size + dstru_padding(dt, &dstru_temp);
 }
  
@@ -173,12 +163,14 @@ static int get_new_size(enum type st, struct offset_table *tbl){
 }
 
 int add_to_table_otable(struct offset_table *src, struct offset_table *dest){
-    struct offset_member temp = { 0, 0, STYPE_NONE, NULL};
+    struct offset_member temp;
+
     temp.offset = get_offset(DYN_S_VOIDP, dest);
-    temp.scalar_type = STYPE_NONE;
     temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
+    temp.scalar_type = STYPE_NONE;
     temp.subtable = src;
 
+    dest->structure_size += temp.size;
     table_add_entry(dest, temp);
 
     return 0;
@@ -187,17 +179,22 @@ int add_to_table_otable(struct offset_table *src, struct offset_table *dest){
 int add_to_table(struct ffi_instruction *ins, struct offset_table *tbl){
     enum type st = (enum type) ins->type;
     enum dstru_types dt = ffi_dstru_bridge(st);
+    struct offset_member temp;
     int pad_size, new_size;
-    struct offset_member temp = { 0, 0, STYPE_NONE, NULL };
 
     new_size = get_new_size(st, tbl);
     pad_size = get_offset(dt, tbl);
 
-    temp.scalar_type = st;
-    temp.size = dstru_sizeof(dt, NULL);
-    temp.subtable = NULL;
-    temp.offset = pad_size;
+#ifdef DEBUG
+    printf("add_to_table(): new_size: %d pad_size: %d\n", new_size, pad_size);
+#endif 
 
+    temp.offset = pad_size;
+    temp.size = dstru_sizeof(dt, NULL);
+    temp.scalar_type = st;
+    temp.subtable = NULL;
+
+    tbl->structure_size = new_size;
     table_add_entry(tbl, temp);
 
     return 0;
