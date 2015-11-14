@@ -157,7 +157,6 @@ int genops_tvallist(struct ffi_instruction_obj *ins,
         genops_tval(ins, tvallist->nodes[0]);
     }
 
-
     return 0;
 }
 

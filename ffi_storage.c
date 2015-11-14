@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define STACK_INITIAL 100
 #define DEBUG
@@ -76,27 +77,25 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #ifdef DEBUG
     printf("get_storage(): %p\n", s_ops);
 #endif
-    if (s_ops == NULL || res == NULL || *res == NULL)
+    if (s_ops == NULL || res == NULL)
         return 1;
-
-    struct ffi_stack *data;
 
     struct ffi_instruction cur;
     struct dstru_struct *first;
-    struct dstru_struct *temp;
-    struct dstru_struct *temp2;
-    int position = 0;
-    int first_flag = 0;
+    struct dstru_struct *temp1;
+    struct dstru_struct *footemp2;
+    struct ffi_stack *stack;
+    bool is_second = false;
     int i;
-
-    if(stack_init(&data) != 0)
-        return 1;
 
     dstru_init(0, &first);
     if (first == NULL)
         return 1;
 
-    push(first, data);
+    if(stack_init(&stack) != 0)
+        return 1;
+
+    push(first, stack);
 
     for (i=0; i<s_ops->instruction_count; cur = s_ops->instructions[i++]){
         switch (cur.operation){
@@ -107,36 +106,32 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #ifdef DEBUG
                 printf("get_storage(): PTR\n");
 #endif
-                if (first_flag){
-                    first_flag = 0;
-                    continue;
-                }
+                if (is_second){ is_second = false; continue; }
 
-                dstru_init(0, &temp);
-                push(temp, data);
-                printf("New top: %p\n", temp);
+                dstru_init(0, &temp1);
+                push(temp1, stack);
                 
                 break;
             case END_STRUCT_PTR:
 #ifdef DEBUG
                 printf("get_storage(): END-PTR\n");
 #endif
-                if (data->stack_elem != 2){
-                    pop(&temp, data);
-                    dstru_finalize(temp);
-                    top(&temp2, data);
+                if (stack->stack_elem != 2){
+                    pop(&temp1, stack);
+                    dstru_finalize(temp1);
+                    top(&footemp2, stack);
 #ifdef DEBUG
-                    printf("???%p %p\n", temp, temp2);
+                    printf("temp1: %p footemp2: %p\n", temp1, footemp2);
 #endif
-                    dstru_add_voidp(temp->buffer, temp2);
+                    dstru_add_voidp(temp1->buffer, footemp2);
                 }
                 break;
             case MEMBER:
 #ifdef DEBUG
                 printf("get_storage(): MMEMBER\n");
 #endif
-                top(&temp, data);
-                add_to_top(&cur, temp);
+                top(&temp1, stack);
+                add_to_top(&cur, temp1);
                 break;
             case MEMBER_PTR:
                 //TODO!
@@ -150,9 +145,9 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
         }
     }
 
-    top(&temp2, data);
-    dstru_finalize(temp2);
-    *res = temp2->buffer;
+    top(&footemp2, stack);
+    dstru_finalize(footemp2);
+    *res = footemp2->buffer;
 
     return 0;
 }

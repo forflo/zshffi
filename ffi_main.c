@@ -59,6 +59,15 @@ struct t3foo {
     int c; 
 };
 
+struct test_real_2 {
+    char a;
+    double b;
+    struct {
+        double a;
+        int b;
+    } c;
+};
+
 void modify_t3(struct t3 *stru){
     stru->a = '6';
     stru->b = 123.123123123;
@@ -92,15 +101,18 @@ int main(void){
     printf("\n");
     emit_human_otbl(tbl, 0);
 
+    printf("\n");
+    get_storage(&res, instructions);
 
-//  printf("\n");
-//  get_storage(&res, instructions);
+    struct test_real_2 tp = *((struct test_real_2 *) res);
+    printf("a: %c b: %lf c->a: %lf c->b: %d\n",
+            tp.a, tp.b, tp.c.a, tp.c.b);
 
 //    struct t1 t = *((struct t1 *) res);
 //    printf("foo: %hhc | bar: %hhu | baz: %hi | moo: %hu\n", t.a, t.b, t.c, t.d);
 //    printf("foo: %i | bar: %u | baz: %li | moo: %lu\n", t.e, t.f, t.g, t.h);
 //    printf("foo: %lli | bar: %llu | baz: %f | moo: %lf\n", t.i, t.j, t.k, t.l);
-
+//
 //    struct t2 t = *((struct t2 *) res);
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
 //    printf("Storage ok!");
@@ -116,7 +128,7 @@ int main(void){
 //    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
 //    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
 //
-    ffilex_destroy(ffi_scan);
+//    ffilex_destroy(ffi_scan);
 
     return EXIT_SUCCESS;
 }

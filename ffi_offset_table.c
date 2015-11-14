@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define DEBUG
 static const int INIT_SIZE = 10;
@@ -108,6 +109,7 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
     struct offset_stack *ostack;
     struct ffi_instruction cur;
     int i;
+    bool stack_empty = true;
 
     if (table_init(&result) != 0)
         return 1;
@@ -118,8 +120,13 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
     for (i=0; i<ops->instruction_count; cur = ops->instructions[i++]){
         switch (cur.operation){
             /* Will be flattened */
-            case START_STRUCT: break;
-            case END_STRUCT: break;
+            case START_STRUCT: 
+                if (stack_empty){
+                    table_init(&temp);
+                    push(temp, ostack);
+                    stack_empty = false;
+                }
+                break;
             case START_STRUCT_PTR:
 #ifdef DEBUG
                 printf("gentbl(): PTR\n");
