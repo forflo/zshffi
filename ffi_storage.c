@@ -117,6 +117,10 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
                 printf("New top: %p\n", temp);
                 
                 break;
+            case START_STRUCT_ARR:
+                break;
+            case END_STRUCT_ARR:
+                break;
             case END_STRUCT_PTR:
 #ifdef DEBUG
                 printf("get_storage(): END-PTR\n");
@@ -137,6 +141,10 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
 #endif
                 top(&temp, data);
                 add_to_top(&cur, temp);
+                break;
+            case MEMBER_ARR:
+                break;
+            case MEMBER_PTR:
                 break;
             case START_UNION:
                 break;

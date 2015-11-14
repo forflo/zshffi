@@ -1,42 +1,12 @@
 # FFI module spec
-## Usage
-    usage: ffi_call <store_var> <funcname> <signature>
-           ffi_show <store_var>
-           => Format: 
-           $ ffi_show foo
-             (type: uint64*) 5000323
-           ffi_read <store_var> 
+## Overview
+    usage:  ffi_call <store_var> <funcname> <objspec>
+            ffi_read <store_var> <locspec>
+            ffi_write <store_var> <changespec>
+            ffi_mkstruct <store_var> <objspec>
+            ffi_show <store_var>
 
-    
-    consider the following ffi code:
-    
-    struct * = {
-        cchar = [5],
-        cdouble = [255.255],
-        struct * = {
-            struct * = {
-                cdouble = [7431.123],
-                cchar = [?],
-                cint = [-123]
-            },
-            struct * = {
-                cdouble = [431.123],
-                cchar = [/],
-                cint = [-999]
-            }
-        }
-    }
-
-    ffi_read var_1 @->[2]->[0]->[1] 
-    => would return the string "?"
-
-    ffi_read var_1 @->[1]
-    => would return the string "255.255"
-
-    ffi_read var_1 @->[2]->[1]->[2]
-    => would return the string "-999"
-
-## Grammatik location specifier
+## Grammar of location specifiers
 
     <locspec> ::= @ <descent_list>
     <descent_list> ::= <descent> |
@@ -46,11 +16,12 @@
                  <number> <digit>
     <digit> ::= 0 | 1 | ... | 9
 
-## Grammatik struktur specifier
-    <signature> ::= <arguments> "->" <return>
-    <arguments> ::= <tval_list> |
-                    <arguments> "|" <tval_list>
-    <return> ::= <type_and_val>
+## Grammar of change specifiers
+
+    <changespec> ::= <locspec> = [ <number> ]
+
+## Grammar of struktur specifiers
+    <objspec> ::= <type_and_val>
 
     <tval_list> ::= <type_and_val> |
                     <tval_list> , <type_and_val>
@@ -65,13 +36,39 @@
                    <c_type> * = { <tval_list> }
                    <c_type> @ = { <tval_list> }
 
-    <value> ::= ( <string> )
+    <value> ::= [ <string> ]
     <c_type> ::= union | struct
     <s_type> ::= cchar       cuchar      cshort      cushort     cint        
                  cuint       clong       culong      clonglong   culonglong  
                  cfloat      cdouble     voidp
 
-## Konversoin semantics
+## Semantic of location specifiers
+An location specifier can either be used to
+read or to set values inside of an storage object.
+First lets look at how values are interpreted
+if they're beeing read.
+
+The expression "@" for example, would instruct
+ffi\_read to interpret a scalar. The fact that
+"@" can't express whether the object was instanciated
+by 
+
+    cchar = [2]
+
+or
+
+    cdouble * = [332.32]
+
+doesn't matter, because the command can infer the
+conversin from the way the storage object was 
+created internally. The concrete types you specifiy
+through an \<objspec\> will be preserved.
+
+The semantics of the conversion concrete c type to string
+is the exact opposit of the conversion semantics of 
+string to concrete c type.
+
+## Conversoin semantics
 Lets consider the following sample code:
 
     1    cchar = [ ], 
@@ -130,63 +127,101 @@ String -> signed long long: strtoll
 String -> unsigned long long: strtoull
 
 ## Example Code
-    ffi_call printf_ret printf "
+### Structure specifier
+* Example 1
+
+    struct * = {
+        cchar = [5],
+        cdouble = [255.255],
         struct * = {
-            cushort * = (42),
-            culong @ = {
-                culong * = (32), 
-                culong = (64),
-            },
-            cdouble * = (3.141592), 
-            union = {
-                cfloat = (0.32),
-                cdouble = (0.342),
+            struct * = {
+                cdouble = [7431.123],
+                cchar = [?],
+                cint = [-123]
             },
             struct * = {
-                cchar = (a),
-                cchar @ = {
-                    cchar = (a), 
-                    cchar = (b)
-                },
-                char * = (foobar),
-                callback* = (zsh_functionname),
-            },
-        }, float = (0.53), int = (32) -> cint = (?)"
+                cdouble = [431.123],
+                cchar = [/],
+                cint = [-999]
+            }
+        }
+    }
+
+* Example 2
+
+    struct = {
+        cchar = [3],
+        cdouble = [43.43]
+    }
+
+* Example 3
+
+    clong = [123456789100]
+
+### Structure accessor (read)
+* (Compare example 1)
+
+    @->[2]->[0]->[1] 
+    would access the string "?"
+
+    @->[1]
+    would access the string "255.255"
+
+    @->[2]->[1]->[2]
+    would access the string "-999"
+
+* (Compare example 2)
+
+    @->[1]
+    would access the string "43.43"
+
+* (Compare example 3)
+    @
+    would access the string "123456789100"
+
+### Structure accessor (write)
+* (Compare example 1)
+
+    @->[2]->[0]->[1]=[!]
+    would change the string "?" to "!"
+
+    @->[2]->[1]->[2]=[-1001]
+    would change the string "-999" to "-1001"
 
 
 ## Specification of the type names
-Cchar
-     Equivalent to the native char c-type
+* Cchar:
+  Equivalent to the native char c-type
 
-Cuchar
-     Equivalent to the native unsigned char c-type (UInt8)
+* Cuchar:
+  Equivalent to the native unsigned char c-type (UInt8)
 
-Cshort
-    Equivalent to the native signed short c-type (Int16)
+* Cshort:
+  Equivalent to the native signed short c-type (Int16)
 
-Cushort
-    Equivalent to the native unsigned short c-type (UInt16)
+* Cushort:
+  Equivalent to the native unsigned short c-type (UInt16)
 
-Cint
-    Equivalent to the native signed int c-type (Int32)
+* Cint:
+  Equivalent to the native signed int c-type (Int32)
 
-Cuint
-    Equivalent to the native unsigned int c-type (UInt32)
+* Cuint:
+  Equivalent to the native unsigned int c-type (UInt32)
 
-Clong
-    Equivalent to the native signed long c-type
+* Clong:
+  Equivalent to the native signed long c-type
 
-Culong
-    Equivalent to the native unsigned long c-type
+* Culong:
+  Equivalent to the native unsigned long c-type
 
-Clonglong
-    Equivalent to the native signed long long c-type (Int64)
+* Clonglong:
+  Equivalent to the native signed long long c-type (Int64)
 
-Culonglong
-    Equivalent to the native unsigned long long c-type (UInt64)
+* Culonglong:
+  Equivalent to the native unsigned long long c-type (UInt64)
 
-Cfloat
-    Equivalent to the native float c-type (Float32)
+* Cfloat:
+  Equivalent to the native float c-type (Float32)
 
-Cdouble
-    Equivalent to the native double c-type (Float64)
+* Cdouble:
+  Equivalent to the native double c-type (Float64)

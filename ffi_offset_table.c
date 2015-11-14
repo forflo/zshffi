@@ -8,8 +8,8 @@
 #include <stdio.h>
 
 #define DEBUG
-#define INIT_SIZE 10
-#define STACK_INITIAL 100
+static const int INIT_SIZE = 10;
+static const int STACK_INITIAL = 100;
 
 struct offset_stack {
     struct offset_table **stack;
@@ -166,7 +166,7 @@ static int get_offset(enum dstru_types dt, struct offset_table *tbl){
     struct dstru_struct dstru_temp = { NULL, 0, 0, 0, 0, NULL, 0, 0 };
     return tbl->structure_size + dstru_padding(dt, &dstru_temp);
 }
-
+ 
 static int get_new_size(enum type st, struct offset_table *tbl){ 
     return get_offset(ffi_dstru_bridge(st), tbl) + 
         dstru_sizeof(ffi_dstru_bridge(st), NULL);
@@ -174,10 +174,10 @@ static int get_new_size(enum type st, struct offset_table *tbl){
 
 int add_to_table_otable(struct offset_table *src, struct offset_table *dest){
     struct offset_member temp = { 0, 0, STYPE_NONE, NULL};
-    temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
     temp.offset = get_offset(DYN_S_VOIDP, dest);
-    temp.subtable = src;
     temp.scalar_type = STYPE_NONE;
+    temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
+    temp.subtable = src;
 
     table_add_entry(dest, temp);
 
