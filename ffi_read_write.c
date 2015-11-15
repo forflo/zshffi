@@ -7,75 +7,155 @@
 #include <stdbool.h>
 
 #define DEBUG
+enum loc_op {
+    SPTR_DEREF,
+    S_DEREF,
+    PTR_DEREF,
+    ASSIGN
+};
+
+
+static int get_setter(void *scanner, char **value, enum token *token);
+static int next_deref(void *scanner, int *level);
+static int convert_to_string(void *buffer, enum type stype);
 
 int ffi_write(struct dstru_struct *storage, const char *location, const char *value);
 
-int ffi_read(struct dstru_struct *storage, const char *location, char **result){
+int ffi_read(struct offset_table *tbl, 
+        struct dstru_struct *stru, 
+        const char *location, 
+        char **result){
 #ifdef DEBUG
-    printf("ffi_read() location: [%s] storage: [%p]", location, storage);
+    printf("ffi_read() location: [%s] storage: [%p]", location, stru);
 #endif
-    void *ffiloc_scan;
-    ffiloclex_init(&ffiloc_scan);
+    void *scanner;
+    void *buffer = stru->buffer;
+    char *value;
+    int level, lookahead;
+    bool scanner_valid = true, is_first = true;
+    enum loc_op d;
+
+    ffiloclex_init(&scanner);
+    ffiloc_scan_string(location, scanner);
 //    ffiloc_scan_string("@->[123]->[32] -> [4711123] =[0xCAFFEEBABE]", ffiloc_scan);
-    ffiloc_scan_string(location, ffiloc_scan);
 
-    int level, ret;
+    lookahead = ffiloclex(scanner);
 
-    if(ffiloclex(ffiloc_scan) != START){
-#ifdef DEBUG
-        printf("No start symbold found!\n");
-#endif
+    if(lookahead != START){
+        ffiloclex_destroy(scanner);
         return 1;
     }
 
-    
+    while(scanner_valid){
+        lookahead = ffiloclex(scanner);
+        switch(lookahead){
+            case POINT:
+                if (next_deref(scanner, &level) || level == -1){
+                    ffiloclex_destroy(scanner);
+                    return 1;
+                }
+                d = S_DEREF;
 
-    for(;;){
-        ret = next_level(ffiloc_scan, &level);
-        if (ret == 2) break; /* End of file reached */
-        if (ret == 1) {
-            return 1; /* Syntax error */
-            break;
-        }
-
-        
-    }
-
-    ffiloclex_destroy(ffiloc_scan);
-    return 0;
-}
-
-static int next_level(void *ffiloc_scan, int *lvl){
-    int arrow, boxopen, num, boxclose;
-    int level;
-
-    /* "Parses" the argument list */
-    arrow = ffiloclex(ffiloc_scan);
-    if (arrow == ENDOFFILE)
-        return 2;
-    boxopen = ffiloclex(ffiloc_scan);
-    num = ffiloclex(ffiloc_scan);
-    if (num == UNUMBER)
-        level = atoi(ffilocget_text(ffiloc_scan));
-    boxclose = ffiloclex(ffiloc_scan);
-    
-    if(arrow == ARROW && boxopen == BOXOPEN && boxclose == BOXCLOSE){
-        switch(num){
-            case UNUMBER:
-#ifdef DEBUG
-                printf("next_level() Level: %d\n", level);
-#endif
                 break;
-            default :
-#ifdef DEBUG
-                printf("next_level(): Not a number!\n");
-#endif
+            case DOLLAR:
+                if (next_deref(scanner, &level) || level != -1){
+                    ffiloclex_destroy(scanner);
+                    return 1; 
+                }
+                d = PTR_DEREF;
+
+                break;
+            case ARROW:
+                if (next_deref(scanner, &level) || level == -1){
+                    ffiloclex_destroy(scanner);
+                    return 1;
+                }
+                d = SPTR_DEREF;
+
+                break;
+            case ENDOFFILE:
+                scanner_valid = false;
+                break;
+            default:
+                ffiloclex_destroy(scanner);
                 return 1;
                 break;
         }
-    } else {
-        return 1;
+
+        /* Now we know which operation we need to do based on the
+           content in d */
+        if (scanner_valid){
+            switch(d){
+                case S_DEREF:
+                    /* TODO */
+                    break;
+                case DOLLAR:
+                    /* TODO */
+                    break;
+                case ARROW:
+                    buffer = buffer + tbl->members[level].offset;
+                    tbl = tbl->members[level];
+                    break;
+            }
+        } else { /* If we've reached EOF, then dereference pointer */
+            convert_to_string(buffer ,tbl->members[level].scalar_type);
+        }
     }
+
+    ffiloclex_destroy(scanner);
+    return 0;
+}
+
+static int convert_to_string(void *buffer, enum type stype){
+    
+    return 0;
+}
+
+static int get_setter(void *scanner, char **value, enum token *token){
+    int boxopen, string_token, boxclose;
+
+    boxopen = ffiloclex(scanner);
+    string_token = ffiloclex(scanner);
+    if (!(string_token == UNUMBER || string_token == NUMBER
+       || string_token == HEX || string_token == FLOAT))
+        return 1;
+
+    *token = string_token;
+    *value = malloc(sizeof(char) * (strlen(ffilocget_text(scanner)) + 1));
+    if (*value == NULL)
+        return 1;
+    strcpy(*value, ffilocget_text(scanner));
+
+    boxclose = ffiloclex(scanner);
+    
+    /* check for syntax error */
+    if (!(boxopen == BOXOPEN && 
+            boxclose == BOXCLOSE))
+        return 1;
+
+    return 0;
+}
+
+/* returns in level -1 of DOLLAR and 0 if normal [<num>] */
+static int next_deref(void *scanner, int *level){
+    int boxopen_dollar, num, boxclose;
+
+    boxopen_dollar = ffiloclex(scanner);
+    if (boxopen_dollar == DOLLAR){
+        *level = -1;
+        return 0;
+    }
+
+    num = ffiloclex(scanner);
+    if (num == UNUMBER)
+        *level = atoi(ffilocget_text(scanner));
+    boxclose = ffiloclex(scanner);
+
+    /* check for syntax error */
+    if(!(boxopen_dollar == BOXOPEN
+         && num == UNUMBER 
+         && boxclose == BOXCLOSE))
+        return 1;
 
     return 0;
 }

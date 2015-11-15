@@ -11,7 +11,6 @@
 #define STACK_INITIAL 100
 #define DEBUG
 
-
 struct ffi_stack {
     struct dstru_struct **dstru_stack;
     int stack_size;
@@ -81,21 +80,20 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
         return 1;
 
     struct ffi_instruction cur;
-    struct dstru_struct *first;
     struct dstru_struct *temp1;
-    struct dstru_struct *footemp2;
+    struct dstru_struct *temp2;
     struct ffi_stack *stack;
     bool is_second = false;
     int i;
 
-    dstru_init(0, &first);
-    if (first == NULL)
+    dstru_init(0, &temp1);
+    if (temp1 == NULL)
         return 1;
 
     if(stack_init(&stack) != 0)
         return 1;
 
-    push(first, stack);
+    push(temp1, stack);
 
     for (i=0; i<s_ops->instruction_count; cur = s_ops->instructions[i++]){
         switch (cur.operation){
@@ -119,11 +117,12 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
                 if (stack->stack_elem != 2){
                     pop(&temp1, stack);
                     dstru_finalize(temp1);
-                    top(&footemp2, stack);
+                    top(&temp2, stack);
 #ifdef DEBUG
-                    printf("temp1: %p footemp2: %p\n", temp1, footemp2);
+                    printf("temp1: %p temp2: %p\n", temp1, temp2);
 #endif
-                    dstru_add_voidp(temp1->buffer, footemp2);
+                    dstru_add_voidp(temp1->buffer, temp2);
+                    free(temp1); /* Only free dstru struct not the buffer! */
                 }
                 break;
             case MEMBER:
@@ -134,20 +133,23 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
                 add_to_top(&cur, temp1);
                 break;
             case MEMBER_PTR:
-                //TODO!
-                /* (1) Neue dystru pushen
-                   (2) Member mit dem typ alegen 
-                   (3) dystru finalizen
-                   (4) Pointer auf Buffer in 
-                       die ebene darunter einhängen
-                   */
+#ifdef DEBUG
+                printf("get_storage(): MEMBER-PTR\n");
+#endif
+                dstru_init(0, &temp1);
+                add_to_top(&cur, temp1);
+                dstru_finalize(temp1);
+
+                top(&temp2, stack);
+                dstru_add_voidp(temp1->buffer, temp2);
+                free(temp1);
                 break;
         }
     }
 
-    top(&footemp2, stack);
-    dstru_finalize(footemp2);
-    *res = footemp2->buffer;
+    top(&temp2, stack);
+    dstru_finalize(temp2);
+    *res = temp2->buffer;
 
     return 0;
 }

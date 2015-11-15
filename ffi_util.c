@@ -64,9 +64,6 @@ int emit_human_otbl(struct offset_table *tbl, int tabs){
 }
 
 enum dstru_types ffi_dstru_bridge(enum type stype){
-#ifdef DEBUG
-    printf("ffi_dstru_bridge(): From %s\n", TYPE_STRING_TAB[stype]);
-#endif
     switch(stype){
         case STYPE_CCHAR: return DYN_S_UINT8; break;
         case STYPE_CUCHAR: return DYN_S_UINT8; break;

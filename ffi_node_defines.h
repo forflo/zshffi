@@ -18,6 +18,8 @@
     F(STYPE_CULONGLONG) \
     F(STYPE_CFLOAT)     \
     F(STYPE_CDOUBLE)    \
+    F(STYPE_SCALARPTR)  \
+    F(CTYPE_STRUCTPTR)  \
     F(CTYPE_UNION)      \
     F(CTYPE_STRUCT)
 

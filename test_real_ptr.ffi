@@ -11,6 +11,9 @@ struct * = {
             cdouble = [431.123],
             cchar = [/],
             cint = [-999]
+        },
+        struct = {
+            cchar = [4]
         }
     }
 }

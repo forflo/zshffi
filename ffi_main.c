@@ -42,8 +42,8 @@ struct t2 {
     } anon2;
 };
 
-struct t3 {
-    char a;
+struct test_real_ptr {
+    char *a;
     double b;
     struct t3baz *c;
 };
@@ -54,9 +54,9 @@ struct t3baz {
 };
 
 struct t3foo {
-    double a;
+    double *a;
     char b;
-    int c; 
+    int *c; 
 };
 
 struct test_real_2 {
@@ -68,8 +68,8 @@ struct test_real_2 {
     } c;
 };
 
-void modify_t3(struct t3 *stru){
-    stru->a = '6';
+void modify_t3(struct test_real_ptr *stru){
+    *stru->a = '6';
     stru->b = 123.123123123;
     stru->c->b->b = '{';
 }
@@ -80,7 +80,7 @@ int main(void){
     struct offset_table *tbl;
     void *res;
 
-    ffidebug = 1;
+    ffidebug = 0;
 
     void *ffi_scan;
     ffilex_init(&ffi_scan);
@@ -104,9 +104,9 @@ int main(void){
     printf("\n");
     get_storage(&res, instructions);
 
-    struct test_real_2 tp = *((struct test_real_2 *) res);
-    printf("a: %c b: %lf c->a: %lf c->b: %d\n",
-            tp.a, tp.b, tp.c.a, tp.c.b);
+//  struct test_real_2 tp = *((struct test_real_2 *) res);
+//  printf("a: %c b: %lf c->a: %lf c->b: %d\n",
+//          tp.a, tp.b, tp.c.a, tp.c.b);
 
 //    struct t1 t = *((struct t1 *) res);
 //    printf("foo: %hhc | bar: %hhu | baz: %hi | moo: %hu\n", t.a, t.b, t.c, t.d);
@@ -117,13 +117,14 @@ int main(void){
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
 //    printf("Storage ok!");
 //
-//    struct t3 *t = ((struct t3 *) res);
-//    printf("\nVorher t: %p\n", t);
-//    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
-//    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);
-//
-//    modify_t3(t);
-//
+    struct test_real_ptr *t = ((struct test_real_ptr *) res);
+    printf("\nVorher t: %p\n", t);
+    printf("a: %c b: %lf c: %lf d: %c\n", *(t->a), t->b, *t->c->a->a, t->c->a->b);
+    printf("e: %d f: %lf g: %c h: %i\n", *t->c->a->c, *t->c->b->a, t->c->b->b, *t->c->b->c);
+
+
+    //modify_t3(t);
+
 //    printf("\nNachher t: %p\n", t);
 //    printf("a: %c b: %lf c: %lf d: %c\n", t->a, t->b, t->c->a->a, t->c->a->b);
 //    printf("e: %d f: %lf g: %c h: %i\n", t->c->a->c, t->c->b->a, t->c->b->b, t->c->b->c);

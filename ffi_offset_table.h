@@ -22,5 +22,6 @@ struct offset_table {
 int add_to_table_otable(struct offset_table *src, struct offset_table *dest);
 int add_to_table(struct ffi_instruction *ins, struct offset_table *tbl);
 int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table);
+int add_to_table_sptr(struct offset_table *dest, struct ffi_instruction *ins);
 
 #endif /* OFFSET_TABLE */

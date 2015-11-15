@@ -24,3 +24,7 @@ ntest: $(FLEX_SRC) $(BISON_SRC) $(SRC_1) $(SRC_2) $(SRC_3) ffi_main_generate.c
 	bison --debug -d $(BISON_SRC)
 	flex --debug $(FLEX_SRC)
 	gcc -g -o ntest $(SRC_1) $(SRC_2) $(SRC_3) ffi_main_generate.c
+
+ltest: $(FLEX_SRC) $(BISON_SRC) $(SRC_1) $(SRC_2) $(SRC_3) ffi_main_generate.c
+	flex --debug ffi_scanner_location.l
+	gcc -o ltest ffi_scanner_location.c

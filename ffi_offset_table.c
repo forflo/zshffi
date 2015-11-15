@@ -133,6 +133,7 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
 #endif
                 table_init(&temp);
                 push(temp, ostack);
+                stack_empty = false;
                 break;
             case END_STRUCT_PTR:
 #ifdef DEBUG
@@ -148,6 +149,13 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
 #endif
                 top(&temp2, ostack);
                 add_to_table(&cur, temp2);
+                break;
+            case MEMBER_PTR:
+#ifdef DEBUG
+                printf("gentbl(): MEMBER-PTR\n");
+#endif
+                top(&temp2, ostack);
+                add_to_table_sptr(temp2, &cur);
                 break;
         }
     }
@@ -169,12 +177,26 @@ static int get_new_size(enum type st, struct offset_table *tbl){
         dstru_sizeof(ffi_dstru_bridge(st), NULL);
 }
 
+int add_to_table_sptr(struct offset_table *dest, struct ffi_instruction *ins){
+    struct offset_member temp;
+
+    temp.offset = get_offset(DYN_S_VOIDP, dest);
+    temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
+    temp.scalar_type = STYPE_SCALARPTR;
+    temp.subtable = NULL;
+
+    dest->structure_size += temp.size;
+    table_add_entry(dest, temp);
+
+    return 0;
+}
+
 int add_to_table_otable(struct offset_table *src, struct offset_table *dest){
     struct offset_member temp;
 
     temp.offset = get_offset(DYN_S_VOIDP, dest);
     temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
-    temp.scalar_type = STYPE_NONE;
+    temp.scalar_type = CTYPE_STRUCTPTR;
     temp.subtable = src;
 
     dest->structure_size += temp.size;
