@@ -30,6 +30,6 @@ struct query_op {
 
 static int next_level(void *ffiloc_scan, int *lvl);
 int ffi_read(struct offset_table *tbl, 
-        struct dstru_struct *storage, const char *query, char **result);
+        void *dystru_buffer, const char *query, char **result);
 
 #endif

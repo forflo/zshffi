@@ -43,14 +43,14 @@ int emit_human_otbl(struct offset_table *tbl, int tabs){
     int i, j;
 
     for (j=0; j<tabs; j++)
-        printf("\t");
+        printf("  ");
 
     printf("[Offsettable: %p]\n", tbl);
     for (i=0; i<tbl->member_count; i++){
         for (j=0; j<tabs; j++)
-            printf("\t");
+            printf("  ");
 
-        printf("[offset: %2d | size: %d | type: %13s | subtable: %p ]\n",
+        printf("[offset: %2d | size: %d | type: %13s | subtable: %p]\n",
             tbl->members[i].offset,
             tbl->members[i].size,
             TYPE_STRING_TAB[tbl->members[i].scalar_type],

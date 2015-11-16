@@ -6,6 +6,8 @@
 #include "ffi_generate_ops.h"
 #include "ffi_storage.h"
 #include "ffi_util.h"
+#include "ffi_read_write.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -74,7 +76,7 @@ void modify_t3(struct test_real_ptr *stru){
     stru->c->b->b = '{';
 }
 
-int main(void){
+int main(int argc, char **argv){
     struct nary_node *root;
     struct ffi_instruction_obj *instructions;
     struct offset_table *tbl;
@@ -104,6 +106,12 @@ int main(void){
     printf("\n");
     get_storage(&res, instructions);
 
+    printf("\n");
+    char *string;
+    ffi_read(tbl, res, "@->[2]->[0]", &string);
+
+    printf("Result: [%s]\n", string);
+
 //  struct test_real_2 tp = *((struct test_real_2 *) res);
 //  printf("a: %c b: %lf c->a: %lf c->b: %d\n",
 //          tp.a, tp.b, tp.c.a, tp.c.b);
@@ -117,10 +125,10 @@ int main(void){
 //    printf("a: %c b: %lf c: %lf d: %i\n", t.a, t.b, t.anon2.c, t.anon2.d);
 //    printf("Storage ok!");
 //
-    struct test_real_ptr *t = ((struct test_real_ptr *) res);
-    printf("\nVorher t: %p\n", t);
-    printf("a: %c b: %lf c: %lf d: %c\n", *(t->a), t->b, *t->c->a->a, t->c->a->b);
-    printf("e: %d f: %lf g: %c h: %i\n", *t->c->a->c, *t->c->b->a, t->c->b->b, *t->c->b->c);
+//    struct test_real_ptr *t = ((struct test_real_ptr *) res);
+//    printf("\nVorher t: %p\n", t);
+//    printf("a: %c b: %lf c: %lf d: %c\n", *(t->a), t->b, *t->c->a->a, t->c->a->b);
+//    printf("e: %d f: %lf g: %c h: %i\n", *t->c->a->c, *t->c->b->a, t->c->b->b, *t->c->b->c);
 
 
     //modify_t3(t);

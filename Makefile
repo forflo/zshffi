@@ -3,7 +3,7 @@ FLEX_SRC = ffi_scanner.l
 BISON_SRC = ffi_parser.y
 SRC_1 = ffi_parser.c ffi_scanner.c 
 SRC_2 = ffi_parser_util.c ffi_scanner_util.c ffi_nary_tree.c ffi_generate_ops.c
-SRC_3 = ffi_util.c ffi_dstru_util.c ffi_dstru.c ffi_storage.c ffi_offset_table.c
+SRC_3 = ffi_util.c ffi_dstru_util.c ffi_dstru.c ffi_storage.c ffi_offset_table.c ffi_read_write.c ffi_scanner_location.c
 
 clean:
 	-rm *.o
