@@ -1,6 +1,6 @@
 # Todos
 ## Important
-* Implement storage manipulation with custom querie language
+* Implement storage manipulation with custom query language
 * Routines for freeing up memory.
   * Syntax tree
   * Storage tree
