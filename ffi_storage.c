@@ -120,6 +120,7 @@ int get_storage(void **res, struct ffi_instruction_obj *s_ops){
                     top(&temp2, stack);
 #ifdef DEBUG
                     printf("temp1: %p temp2: %p\n", temp1, temp2);
+                    printf("temp1->buffer: %p\n", temp1->buffer);
 #endif
                     dstru_add_voidp(temp1->buffer, temp2);
                     free(temp1); /* Only free dstru struct not the buffer! */

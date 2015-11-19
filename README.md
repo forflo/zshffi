@@ -1,3 +1,3 @@
-# An ffi für the zsh
+# An ffi for the zsh
 This is a work in progress. 
 Don't use.

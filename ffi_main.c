@@ -61,6 +61,14 @@ struct t3foo {
     int *c; 
 };
 
+struct test_read_4 {
+    double a;
+    int b;
+    struct anon_foo {
+        double c;
+    } *p;
+};
+
 struct test_real_2 {
     char a;
     double b;
@@ -108,7 +116,7 @@ int main(int argc, char **argv){
 
     printf("\n");
     char *string;
-    ffi_read(tbl, res, "@->[2]->[0]", &string);
+    ffi_read(tbl, res, argv[1], &string);
 
     printf("Result: [%s]\n", string);
 

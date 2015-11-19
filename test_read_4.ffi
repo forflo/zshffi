@@ -1,1 +1,11 @@
-struct * = { cdouble = [42.42], cint = [4711], struct * = {cdouble = [4333.32]}}
+struct * = { 
+    cdouble = [42.42], 
+    cint = [4711], 
+    struct * = { 
+        cint = [424242],
+        struct * = {
+            cdouble = [4333.32],
+            cint = [321]
+        }
+    }
+}

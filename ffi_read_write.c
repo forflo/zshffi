@@ -17,7 +17,7 @@ enum loc_op {
 
 static const int CONV_LEN = 23;
 
-static int get_setter(void *scanner, char **value, enum token *token);
+static int get_setter(void *scanner, char **value);
 static int next_deref(void *scanner, int *level);
 static int convert_to_string(void *buffer, enum type stype, char **value);
 
@@ -56,6 +56,9 @@ static int next_loc_op(enum loc_op *d, void *scanner, int *level){
 }
 
 static int first_descent(enum loc_op op, void **buffer, struct offset_table **tbl, int level){
+#ifdef DEBUG
+    printf("first_descent()\n");
+#endif
     switch(op){
         case S_DEREF:
             /* TODO */
@@ -66,9 +69,14 @@ static int first_descent(enum loc_op op, void **buffer, struct offset_table **tb
         case SPTR_DEREF:
 #ifdef DEBUG
             printf("tbl->members[level].offset: %d\n", (*tbl)->members[level].offset);
+            printf("Current tbl: %p ", *tbl);
 #endif
-
             *buffer += (*tbl)->members[level].offset;
+            *tbl = (*tbl)->members[level].subtable;
+
+#ifdef DEBUG
+            printf("New tbl: %p\n", *tbl);
+#endif
             break;
     }
 
@@ -76,6 +84,9 @@ static int first_descent(enum loc_op op, void **buffer, struct offset_table **tb
 }
 
 static int descent(enum loc_op op, void **buffer, struct offset_table **tbl, int level){
+#ifdef DEBUG
+    printf("descent()\n");
+#endif
     char arr[sizeof(void *)];
     int i;
 
@@ -94,9 +105,14 @@ static int descent(enum loc_op op, void **buffer, struct offset_table **tbl, int
             for (i=0; i<sizeof(void *); i++)
                 arr[i] = ((char *) *buffer)[i];
 
-            *buffer = (void *) arr;
+            for (i=0; i<sizeof(void *); i++)
+                ((char *) &(*buffer))[i] = arr[i];
+
             *buffer += (*tbl)->members[level].offset;
             *tbl = (*tbl)->members[level].subtable;
+#ifdef DEBUG
+            printf("Subtable: %p\n", *tbl);
+#endif
 
             break;
     }
@@ -113,34 +129,34 @@ int ffi_read(struct offset_table *tbl,
 #endif
     bool scanner_valid = true, is_first = true;
     void *scanner, *buffer = dystru_buffer;
+    struct offset_table *oldtbl = tbl;
     enum token lookahead;
     enum loc_op op;
     char *value;
-    int level; 
+    int level, rc; 
 
     ffiloclex_init(&scanner);
     ffiloc_scan_string(location, scanner);
 
     lookahead = ffiloclex(scanner);
     if(lookahead != START){
+#ifdef DEBUG
+        printf("ffi_read(): No start symbol found!\n");
+#endif
         ffiloclex_destroy(scanner);
         return 1;
     }
 
-#ifdef DEBUG
-        printf("ffi_read(): before while buffer: %p tbl: %p\n", buffer, tbl);
-#endif
     while(scanner_valid){
-#ifdef DEBUG
-        printf("ffi_read(): valid? %d\n", scanner_valid);
-#endif
-        if(next_loc_op(&op, scanner, &level) || op == NONE)
+        rc = next_loc_op(&op, scanner, &level);
+        if (rc || op == NONE)
             scanner_valid = false;
 
 #ifdef DEBUG
-        printf("ffi_read(): valid?: %d buffer: %p tbl: %p\n", scanner_valid, buffer, tbl);
+        printf("ffi_read(): valid: %d buffer: %p tbl: %p\n", scanner_valid, buffer, tbl);
 #endif
         if (scanner_valid){
+            oldtbl = tbl;
             if (is_first){
                 first_descent(op, &buffer, &tbl, level);
                 is_first = false;
@@ -149,8 +165,9 @@ int ffi_read(struct offset_table *tbl,
             }
         } 
     }
+    printf("After loop! Level: %d\n", level);
 
-    convert_to_string(buffer, tbl->members[level].scalar_type, result);
+    convert_to_string(buffer, oldtbl->members[level].scalar_type, result);
 
     ffiloclex_destroy(scanner);
     return 0;
@@ -173,7 +190,7 @@ static int convert_to_string(void *buffer, enum type stype, char **value){
     return 0;
 }
 
-static int get_setter(void *scanner, char **value, enum token *token){
+static int get_setter(void *scanner, char **value){
     int boxopen, string_token, boxclose;
 
     boxopen = ffiloclex(scanner);
@@ -182,7 +199,6 @@ static int get_setter(void *scanner, char **value, enum token *token){
        || string_token == HEX || string_token == FLOAT))
         return 1;
 
-    *token = string_token;
     *value = malloc(sizeof(char) * (strlen(ffilocget_text(scanner)) + 1));
     if (*value == NULL)
         return 1;
@@ -198,7 +214,7 @@ static int get_setter(void *scanner, char **value, enum token *token){
     return 0;
 }
 
-/* returns in level -1 of DOLLAR and 0 if normal [<num>] */
+/* sets level = -1 if DOLLAR and level = 0 if normal [<num>] */
 static int next_deref(void *scanner, int *level){
     int boxopen_dollar, num, boxclose;
 
