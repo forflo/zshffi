@@ -10,6 +10,7 @@
 %option noyywrap
 %option outfile="ffi_scanner.c"
 %option prefix="ffi"
+%option header-file="ffi_scanner.h"
 /* 
  * The following ensures, that we generate 
  * the function ffilex(YYSTYPE *lvalp, ffiscan_t scanner); 

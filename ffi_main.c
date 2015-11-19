@@ -3,6 +3,7 @@
 #include "ffi_node_defines.h"
 #include "ffi_generate_dot.h"
 #include "ffi_offset_table.h"
+#include "ffi_scanner.h"
 #include "ffi_generate_ops.h"
 #include "ffi_storage.h"
 #include "ffi_util.h"
@@ -15,9 +16,6 @@
 
 extern int ffidebug;
 
-extern void ffiset_in(FILE *f, void *scan);
-extern int ffilex_init(void *ffi);
-extern int ffilex_destroy(void *ffi);
 extern int ffiparse(struct nary_node **r, void *scan);
 
 struct t1 {
@@ -88,37 +86,45 @@ int main(int argc, char **argv){
     struct nary_node *root;
     struct ffi_instruction_obj *instructions;
     struct offset_table *tbl;
-    void *res;
+    void *ffi_scan;
+    char function[200], stru[200], argbuf[20], retbuf[20];
+
+    struct ffi_instruction_obj *objarr[20];
+    struct nary_node *treearr[20];
+    struct offset_table *tblarr[20];
+    void *ptrarr[20];
+
+    int args, i;
 
     ffidebug = 0;
 
-    void *ffi_scan;
-    ffilex_init(&ffi_scan);
-    ffiset_in(stdin, ffi_scan);
-    ffiparse(&root, ffi_scan);
 
-#ifdef DEBUG
-    printf("root: %p, root->nodes[0]: %p\n", root, root->nodes[0]);
-#endif
-    genops(&instructions, root->nodes[0]);
+    printf("Geben Sie den Funktionspfad an!\n");
+    fgets(function, 199, stdin);
 
-    printf("\n");
-    emit_human(instructions);
+    printf("Wie viele Argumente?\n");
+    fgets(argbuf, 19, stdin);
+    args = atoi(argbuf);
 
-    printf("\n");
-    gentbl(instructions, &tbl);
+    for (i=0; i< args; i++){
+        printf("Geben Sie das %d-te Argument and!\n", i);
+    
+        fgets(stru, 199, stdin);
+        ffilex_init(&ffi_scan);
+        ffi_scan_string(function, ffi_scan);
+        ffiparse(&treearr[i], ffi_scan);
 
-    printf("\n");
-    emit_human_otbl(tbl, 0);
+        genops(&objarr[i], treearr[i]->nodes[0]);
+        printf("\n");
+        emit_human(objarr[i]);
 
-    printf("\n");
-    get_storage(&res, instructions);
+        gentbl(objarr[i], &tblarr[i]);
+        printf("\n");
+        emit_human_otbl(tblarr[i], 0);
+    
+        get_storage(&ptrarr[i], instructions);
 
-    printf("\n");
-    char *string;
-
-    ffi_read(tbl, res, argv[1], &string);
-    printf("Result: [%s]\n", string);
+    }
 
 //    struct t1 t = *((struct t1 *) res);
 //    printf("foo: %hhc | bar: %hhu | baz: %hi | moo: %hu\n", t.a, t.b, t.c, t.d);

@@ -1,10 +1,14 @@
 # FFI module spec
 ## Overview
-    usage:  ffi_call <store_var> <funcname> <objspec>
-            ffi_read <store_var> <locspec>
-            ffi_write <store_var> <changespec>
-            ffi_mkstruct <store_var> <objspec>
+    usage:  ffi_call [-v] <id> <funcname> <objspec>
+            ffi_read <id> <locspec>
+            ffi_write <id> <changespec>
+            ffi_mkstruct <id> <objspec>
             ffi_show <store_var>
+
+## Grammar of funciton specifiers
+    
+    <funcname> ::= <path>/<some_lib>.so/<functionname>
 
 ## Grammar of location specifiers
 

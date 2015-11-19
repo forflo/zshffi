@@ -601,8 +601,8 @@ static yyconst flex_int16_t yy_chk[268] =
 
 static yyconst flex_int16_t yy_rule_linenum[21] =
     {   0,
-       60,   62,   63,   64,   65,   66,   67,   68,   69,   70,
-       71,   72,   73,   74,   76,   77,   78,   79,   80,   82
+       61,   63,   64,   65,   66,   67,   68,   69,   70,   71,
+       72,   73,   74,   75,   77,   78,   79,   80,   81,   83
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -966,7 +966,7 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 58 "ffi_scanner.l"
+#line 59 "ffi_scanner.l"
 
 
 #line 973 "ffi_scanner.c"
@@ -1052,107 +1052,107 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 60 "ffi_scanner.l"
+#line 61 "ffi_scanner.l"
 { }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 62 "ffi_scanner.l"
+#line 63 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CCHAR      ; return(s_type); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 63 "ffi_scanner.l"
+#line 64 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CUCHAR     ; return(s_type); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 64 "ffi_scanner.l"
+#line 65 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CSHORT     ; return(s_type); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 65 "ffi_scanner.l"
+#line 66 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CUSHORT    ; return(s_type); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 66 "ffi_scanner.l"
+#line 67 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CINT       ; return(s_type); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 67 "ffi_scanner.l"
+#line 68 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CUINT      ; return(s_type); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 68 "ffi_scanner.l"
+#line 69 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CLONG      ; return(s_type); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 69 "ffi_scanner.l"
+#line 70 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CULONG     ; return(s_type); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 70 "ffi_scanner.l"
+#line 71 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CLONGLONG  ; return(s_type); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 71 "ffi_scanner.l"
+#line 72 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CULONGLONG ; return(s_type); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 72 "ffi_scanner.l"
+#line 73 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CFLOAT     ; return(s_type); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 73 "ffi_scanner.l"
+#line 74 "ffi_scanner.l"
 { yylval_param->v = (void *) STYPE_CDOUBLE    ; return(s_type); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 74 "ffi_scanner.l"
+#line 75 "ffi_scanner.l"
 { yylval_param->v = (void *) CTYPE_STRUCT     ; return(c_type); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 76 "ffi_scanner.l"
+#line 77 "ffi_scanner.l"
 { return(pointer);   }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 77 "ffi_scanner.l"
+#line 78 "ffi_scanner.l"
 { return(equals);    }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 78 "ffi_scanner.l"
+#line 79 "ffi_scanner.l"
 { return(curlopen);  }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 79 "ffi_scanner.l"
+#line 80 "ffi_scanner.l"
 { return(curlclose); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 80 "ffi_scanner.l"
+#line 81 "ffi_scanner.l"
 { return(comma);     }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 82 "ffi_scanner.l"
+#line 83 "ffi_scanner.l"
 { yylval_param->v = make_valueStr(yytext); return(string); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 84 "ffi_scanner.l"
+#line 85 "ffi_scanner.l"
 ECHO;
 	YY_BREAK
 #line 1159 "ffi_scanner.c"
@@ -2454,7 +2454,7 @@ void ffifree (void * ptr , yyscan_t yyscanner)
 
 /* %ok-for-header */
 
-#line 84 "ffi_scanner.l"
+#line 85 "ffi_scanner.l"
 
 
 
