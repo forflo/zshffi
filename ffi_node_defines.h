@@ -20,10 +20,9 @@
     F(STYPE_CDOUBLE)    \
     F(STYPE_SCALARPTR)  \
     F(CTYPE_STRUCTPTR)  \
-    F(CTYPE_UNION)      \
     F(CTYPE_STRUCT)
 
-#define LIST_NTYPE(F)       \
+#define LIST_NTYPE(F)   \
     F(NT_START)         \
     F(NT_TYPEANDVAL)    \
     F(NT_SCALAR)        \

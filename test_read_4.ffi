@@ -1,11 +1,20 @@
 struct * = { 
-    cdouble = [42.42], 
+    cdouble = [400.4711],
     cint = [4711], 
     struct * = { 
+        cdouble = [123321.887],
         cint = [424242],
         struct * = {
             cdouble = [4333.32],
             cint = [321]
+        }
+    },
+    cdouble = [43.42], 
+    struct * = {
+        cint = [123],
+        struct * = {
+            cdouble = [32144],
+            cint = [33212323]
         }
     }
 }

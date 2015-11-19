@@ -2,6 +2,7 @@
 #include "ffi_generate_ops.h"
 #include "ffi_node_defines.h"
 #include "ffi_util.h"
+#include "ffi_dstru_util.h"
 #include "ffi_dstru.h"
 
 #include <stdlib.h>
@@ -11,6 +12,8 @@
 #define DEBUG
 static const int INIT_SIZE = 10;
 static const int STACK_INITIAL = 100;
+
+static int get_offset(enum dstru_types dt, struct offset_table *tbl);
 
 struct offset_stack {
     struct offset_table **stack;
@@ -109,40 +112,34 @@ int gentbl(struct ffi_instruction_obj *ops, struct offset_table **table){
     struct offset_stack *ostack;
     struct ffi_instruction cur;
     int i;
-    bool stack_empty = true;
 
     if (table_init(&result) != 0)
         return 1;
 
     if(stack_init(&ostack) != 0)
         return 1;
+
+    table_init(&temp);
+    push(temp, ostack);
     
     for (i=0; i<ops->instruction_count; cur = ops->instructions[i++]){
         switch (cur.operation){
-            /* Will be flattened */
-            case START_STRUCT: 
-                if (stack_empty){
-                    table_init(&temp);
-                    push(temp, ostack);
-                    stack_empty = false;
-                }
-                break;
             case START_STRUCT_PTR:
 #ifdef DEBUG
                 printf("gentbl(): PTR\n");
 #endif
                 table_init(&temp);
                 push(temp, ostack);
-                stack_empty = false;
                 break;
             case END_STRUCT_PTR:
 #ifdef DEBUG
-                printf("gentbl(): END-PTR\n");
+                printf("gentbl(): END-STRUPTR\n");
 #endif
                 pop(&temp, ostack);
                 top(&temp2, ostack);
                 add_to_table_otable(temp, temp2);
                 break;
+
             case MEMBER:
 #ifdef DEBUG
                 printf("gentbl(): MMEMBER\n");
@@ -171,18 +168,20 @@ static int get_offset(enum dstru_types dt, struct offset_table *tbl){
         { NULL, tbl->structure_size, 0, 0, 0, NULL, 0, 0 };
     return tbl->structure_size + dstru_padding(dt, &dstru_temp);
 }
- 
+
 static int get_new_size(enum type st, struct offset_table *tbl){ 
     return get_offset(ffi_dstru_bridge(st), tbl) + 
         dstru_sizeof(ffi_dstru_bridge(st), NULL);
 }
 
+/* Adds a pointer to a scalar */
 int add_to_table_sptr(struct offset_table *dest, struct ffi_instruction *ins){
     struct offset_member temp;
 
     temp.offset = get_offset(DYN_S_VOIDP, dest);
     temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
-    temp.scalar_type = STYPE_SCALARPTR;
+    temp.scalar_type = (enum type) ins->type;
+    temp.flags = PTR_MEMBER;
     temp.subtable = NULL;
 
     dest->structure_size += temp.size;
@@ -191,12 +190,14 @@ int add_to_table_sptr(struct offset_table *dest, struct ffi_instruction *ins){
     return 0;
 }
 
+/* Adds another pointer to a struct represented by an offset table */
 int add_to_table_otable(struct offset_table *src, struct offset_table *dest){
     struct offset_member temp;
 
     temp.offset = get_offset(DYN_S_VOIDP, dest);
     temp.size = dstru_sizeof(DYN_S_VOIDP, NULL);
-    temp.scalar_type = CTYPE_STRUCTPTR;
+    temp.scalar_type = STYPE_NONE;
+    temp.flags = SPTR_OFFSET_TBL;
     temp.subtable = src;
 
     dest->structure_size += temp.size;
@@ -221,6 +222,7 @@ int add_to_table(struct ffi_instruction *ins, struct offset_table *tbl){
     temp.offset = pad_size;
     temp.size = dstru_sizeof(dt, NULL);
     temp.scalar_type = st;
+    temp.flags = NORMAL;
     temp.subtable = NULL;
 
     tbl->structure_size = new_size;

@@ -116,13 +116,9 @@ int main(int argc, char **argv){
 
     printf("\n");
     char *string;
+
     ffi_read(tbl, res, argv[1], &string);
-
     printf("Result: [%s]\n", string);
-
-//  struct test_real_2 tp = *((struct test_real_2 *) res);
-//  printf("a: %c b: %lf c->a: %lf c->b: %d\n",
-//          tp.a, tp.b, tp.c.a, tp.c.b);
 
 //    struct t1 t = *((struct t1 *) res);
 //    printf("foo: %hhc | bar: %hhu | baz: %hi | moo: %hu\n", t.a, t.b, t.c, t.d);

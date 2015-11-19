@@ -424,18 +424,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  11
+#define YYFINAL  10
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   21
+#define YYLAST   14
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  12
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  7
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  11
+#define YYNRULES  10
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  26
+#define YYNSTATES  22
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -483,7 +483,7 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    62,    62,    66,    68,    72,    74,    78,    80,    84,
-      86,    90
+      88
 };
 #endif
 
@@ -508,10 +508,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -8
+#define YYPACT_NINF -15
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-8)))
+  (!!((Yystate) == (-15)))
 
 #define YYTABLE_NINF -1
 
@@ -522,9 +522,9 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -7,     2,     4,    11,    -8,    -8,    -8,     5,     8,     6,
-       9,    -8,    -7,    10,    -8,    -8,     6,    -8,    -3,    -7,
-      -8,    -7,    -8,    -2,    -8,    -8
+      -8,     2,     1,     9,   -15,   -15,   -15,     5,     3,     6,
+     -15,     7,   -15,   -15,     3,    -8,   -15,   -15,    -4,    -8,
+     -15,   -15
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -533,20 +533,20 @@ static const yytype_int8 yypact[] =
 static const yytype_uint8 yydefact[] =
 {
        0,     0,     0,     0,     2,     3,     4,     0,     0,     0,
-       0,     1,     0,     0,    11,     7,     0,     5,     0,     0,
-       8,     0,     9,     0,     6,    10
+       1,     0,    10,     7,     0,     0,     8,     5,     0,     0,
+       9,     6
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -8,    -8,     0,    -1,    -8,    -8,     3
+     -15,   -15,   -14,   -15,   -15,   -15,    -1
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,    17,    18,     5,     6,    15
+      -1,     3,     4,    18,     5,     6,    13
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -554,39 +554,37 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       4,    21,    21,     1,     2,    22,    25,     7,     8,     9,
-      10,    11,    12,    13,    16,    14,     0,    19,    23,    20,
-       0,    24
+      19,    17,     1,     2,    20,    21,     8,     9,     7,    10,
+      11,    14,    12,    16,    15
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       0,     4,     4,    10,    11,     8,     8,     5,     6,     5,
-       6,     0,     7,     5,     5,     9,    -1,     7,    19,    16,
-      -1,    21
+       4,    15,    10,    11,     8,    19,     5,     6,     6,     0,
+       5,     5,     9,    14,     7
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    10,    11,    13,    14,    16,    17,     5,     6,     5,
-       6,     0,     7,     5,     9,    18,     5,    14,    15,     7,
-      18,     4,     8,    15,    14,     8
+       0,    10,    11,    13,    14,    16,    17,     6,     5,     6,
+       0,     5,     9,    18,     5,     7,    18,    14,    15,     4,
+       8,    14
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
        0,    12,    13,    14,    14,    15,    15,    16,    16,    17,
-      17,    18
+      18
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     1,     1,     1,     3,     3,     4,     5,
-       6,     1
+       0,     2,     1,     1,     1,     1,     3,     3,     4,     6,
+       1
 };
 
 
@@ -1273,65 +1271,59 @@ yyreduce:
         case 2:
 #line 63 "ffi_parser.y" /* yacc.c:1646  */
     { *root = make_node(start_cnt++, NT_START, NULL, 1, (yyvsp[0].k)); }
-#line 1277 "ffi_parser.c" /* yacc.c:1646  */
+#line 1275 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 67 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1283 "ffi_parser.c" /* yacc.c:1646  */
+#line 1281 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 69 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_cnt++, NT_TYPEANDVAL, NULL, 1, (yyvsp[0].k));  }
-#line 1289 "ffi_parser.c" /* yacc.c:1646  */
+#line 1287 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 5:
 #line 73 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 1, (yyvsp[0].k));  }
-#line 1295 "ffi_parser.c" /* yacc.c:1646  */
+#line 1293 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 75 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(tval_lst_cnt++, NT_TVAL_LIST, NULL, 2, (yyvsp[-2].k), (yyvsp[0].k));  }
-#line 1301 "ffi_parser.c" /* yacc.c:1646  */
+#line 1299 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 79 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(s_cnt++, NT_SCALAR    , (yyvsp[-2].v), 1, (yyvsp[0].k)); }
-#line 1307 "ffi_parser.c" /* yacc.c:1646  */
+#line 1305 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 81 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(sptr_cnt++, NT_SCALAR_PTR, (yyvsp[-3].v), 1, (yyvsp[0].k)); }
-#line 1313 "ffi_parser.c" /* yacc.c:1646  */
+#line 1311 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 85 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(c_cnt++, NT_COMPOUND    , (yyvsp[-4].v), 1, (yyvsp[-1].k)); }
-#line 1319 "ffi_parser.c" /* yacc.c:1646  */
+    {(yyval.k) = make_node(cptr_cnt++, NT_COMPOUND_PTR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
+#line 1317 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 87 "ffi_parser.y" /* yacc.c:1646  */
-    {(yyval.k) = make_node(cptr_cnt++, NT_COMPOUND_PTR, (yyvsp[-5].v), 1, (yyvsp[-1].k)); }
-#line 1325 "ffi_parser.c" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 91 "ffi_parser.y" /* yacc.c:1646  */
+#line 89 "ffi_parser.y" /* yacc.c:1646  */
     {(yyval.k) = make_node(val_cnt++, NT_VALUE, (yyvsp[0].v), 0); }
-#line 1331 "ffi_parser.c" /* yacc.c:1646  */
+#line 1323 "ffi_parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1335 "ffi_parser.c" /* yacc.c:1646  */
+#line 1327 "ffi_parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1559,5 +1551,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 94 "ffi_parser.y" /* yacc.c:1906  */
+#line 92 "ffi_parser.y" /* yacc.c:1906  */
 

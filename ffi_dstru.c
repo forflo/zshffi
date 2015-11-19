@@ -283,6 +283,7 @@ int dstru_add_array(int num,
 	return 0;
 }
 
+//TODO: Remove offset table
 /* structure grows if the space isn't enough */
 int dstru_add_entry(struct dstru_struct *s, int offset, 
         int size, bool is_dstru){

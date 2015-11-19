@@ -14,7 +14,6 @@
         X(HEX)   \
         X(FLOAT)   \
         X(EQUALS)   \
-        X(POINT)   \
         X(DOLLAR) \
         X(START)
 

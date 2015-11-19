@@ -81,9 +81,7 @@ scalar              : s_type equals value
                         {$$ = make_node(sptr_cnt++, NT_SCALAR_PTR, $1, 1, $4); }
                     ;
 
-compound            : c_type equals curlopen tval_list curlclose
-                        {$$ = make_node(c_cnt++, NT_COMPOUND    , $1, 1, $4); }
-                    | c_type pointer equals curlopen tval_list curlclose
+compound            : c_type pointer equals curlopen tval_list curlclose
                         {$$ = make_node(cptr_cnt++, NT_COMPOUND_PTR, $1, 1, $5); }
                     ;
 

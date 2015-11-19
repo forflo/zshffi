@@ -14,6 +14,7 @@ const char *TYPE_STRING_TAB[] = { LIST_TYPE(GENERATE_STRING) };
 const char *OPERATION_STRING_TAB[] = { FFI_BYTECODE(GENERATE_STRING) };
 const char *NONTERMINAL_STRING_TAB[] = { LIST_NTYPE(GENERATE_STRING) };
 const char *DSTRU_STRING_TAB[] = { DYN_S_TYPE(GENERATE_STRING) };
+const char *FLAGS_STRING_TAB[] = { OFFSET_TABLE_FLAG(GENERATE_STRING) };
 
 void emit_human(struct ffi_instruction_obj *ins){
     int i;
@@ -45,16 +46,17 @@ int emit_human_otbl(struct offset_table *tbl, int tabs){
     for (j=0; j<tabs; j++)
         printf("  ");
 
-    printf("[Offsettable: %p]\n", tbl);
+    printf("[Offsettable: %p | Size: %d ]\n", tbl, tbl->structure_size);
     for (i=0; i<tbl->member_count; i++){
         for (j=0; j<tabs; j++)
             printf("  ");
 
-        printf("[offset: %2d | size: %d | type: %13s | subtable: %p]\n",
+        printf("[offset: %2d | size: %d | type: %14s | subtable: %8p | flag: %16s]\n",
             tbl->members[i].offset,
             tbl->members[i].size,
             TYPE_STRING_TAB[tbl->members[i].scalar_type],
-            tbl->members[i].subtable);
+            tbl->members[i].subtable,
+            FLAGS_STRING_TAB[tbl->members[i].flags]);
 
         if (tbl->members[i].subtable != NULL)
             emit_human_otbl(tbl->members[i].subtable, tabs+1);
@@ -77,6 +79,8 @@ enum dstru_types ffi_dstru_bridge(enum type stype){
         case STYPE_CULONGLONG: return DYN_S_UINT64; break;
         case STYPE_CFLOAT: return DYN_S_FLOAT; break;
         case STYPE_CDOUBLE: return DYN_S_DOUBLE; break;
+        case STYPE_NONE: return DYN_S_DOUBLE; break;
+
     }
     return -1;
 }

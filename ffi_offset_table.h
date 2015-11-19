@@ -4,10 +4,21 @@
 #include "ffi_generate_ops.h"
 #include "ffi_node_defines.h"
 
+#define OFFSET_TABLE_FLAG(X) \
+        X(NORMAL) \
+        X(PTR_MEMBER) \
+        X(SPTR_OFFSET_TBL)
+
+#define GENERATE_ENUM(X) X, 
+#define GENERATE_STRING(X) #X, 
+
+enum offset_table_flag { OFFSET_TABLE_FLAG(GENERATE_ENUM) };
+
 struct offset_member {
     int offset;
     int size;
     enum type scalar_type;
+    enum offset_table_flag flags;
     struct offset_table *subtable;
 };
 

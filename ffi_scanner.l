@@ -43,7 +43,6 @@ culonglong   "culonglong"
 cfloat       "cfloat"
 cdouble      "cdouble"
 
-union        "union"
 struct       "struct"
 
 /* helpers */
@@ -72,7 +71,6 @@ string  \[(({letter}|{escapes}|{allowed_symbols}|{digit})+)\]
 {culonglong}    { yylval_param->v = (void *) STYPE_CULONGLONG ; return(s_type); }
 {cfloat}        { yylval_param->v = (void *) STYPE_CFLOAT     ; return(s_type); }
 {cdouble}       { yylval_param->v = (void *) STYPE_CDOUBLE    ; return(s_type); }
-{union}         { yylval_param->v = (void *) CTYPE_UNION      ; return(c_type); }
 {struct}        { yylval_param->v = (void *) CTYPE_STRUCT     ; return(c_type); }
 
 {pointer}       { return(pointer);   }
